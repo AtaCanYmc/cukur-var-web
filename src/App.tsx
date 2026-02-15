@@ -1,45 +1,36 @@
-import {BottomNav} from "./layout/BottomNav.tsx";
-import {StatusBadge} from "./components/button/badge/StatusBadgeü.tsx";
-import {useDevice} from "./hooks/useDevice.tsx";
+import React from 'react';
+import { AppRouter } from './routes';
+import { useDevice } from './hooks/useDevice';
+import {GlobalLoader} from "./components/loader/GlobalLoader.tsx";
 
-function App() {
-    const { isMobile, isTouch } = useDevice();
-
-    const handleNewReport = () => {
-        console.log("Kamera modülü başlatılıyor...");
-        // Burada browser camera API tetiklenecek
-    };
+/**
+ * App Component
+ * 2026 Modern PWA Standartlarında:
+ * - Global State Management (Zustand)
+ * - Centralized Routing (React Router)
+ * - Device-aware Rendering
+ */
+const App: React.FC = () => {
+    const { isDesktop } = useDevice();
 
     return (
-        <div className="relative h-screen w-full bg-slate-100 overflow-hidden select-none">
-            {/* Header - Minimalist */}
-            <header
-                className="absolute top-0 left-0 right-0 p-4 z-10 flex justify-between items-start pointer-events-none">
-                <div className="bg-white/90 backdrop-blur shadow-sm p-3 rounded-2xl pointer-events-auto">
-                    <h1 className="text-xl font-black text-slate-800 tracking-tight">
-                        Çukur<span className="text-orange-600">Var</span>
-                    </h1>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase">İzmir Canlı Rapor</p>
-                </div>
+        <div className="antialiased font-sans text-slate-900 bg-slate-900 overflow-hidden h-full">
+            {/* 1. Global UI Katmanları (Z-Index: 100+) */}
+            <GlobalLoader />
 
-                {/* Quick Stats Overlay */}
-                <div className="flex gap-2 pointer-events-auto">
-                    <StatusBadge count="124" label="Aktif" variant="warning"/>
-                    <StatusBadge count="42" label="Onarıldı" variant="success"/>
+            {/* 2. Masaüstü Kullanıcıları İçin Kısıtlı Deneyim Uyarısı (Opsiyonel) */}
+            {isDesktop && (
+                <div className="hidden lg:flex fixed top-0 left-0 w-full bg-orange-600 text-white text-[10px] font-bold py-1 px-4 z-[60] justify-center tracking-widest uppercase">
+                    En iyi deneyim için mobil cihazdan giriş yapın.
                 </div>
-            </header>
+            )}
 
-            {/* Map Placeholder - Buraya Mapbox/Leaflet gelecek */}
-            <div className="absolute inset-0 bg-slate-200 flex items-center justify-center">
-                <div className="text-slate-400 animate-pulse font-medium">
-                    Harita Yükleniyor...
-                </div>
-            </div>
-
-            {/* Floating Action / Navigation */}
-            {isMobile && isTouch && <BottomNav onReportClick={handleNewReport}/>}
+            {/* 3. Ana Navigasyon ve Sayfa İçerikleri */}
+            <main className="relative h-screen w-full flex flex-col">
+                <AppRouter />
+            </main>
         </div>
     );
-}
+};
 
-export default App
+export default App;

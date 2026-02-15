@@ -27,3 +27,18 @@ html, body, #root {
     padding: 0;
     overflow: hidden;
 }
+
+/* PWA Touch & Scroll Fixes */
+html, body {
+    overscroll-behavior-y: none;
+    touch-action: pan-x pan-y;
+    -webkit-tap-highlight-color: transparent;
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* Harita uygulaması olduğu için tüm ekranı biz yöneteceğiz */
+}
+
+/* Alt navigasyonun haritayı kapatmaması için padding */
+.map-container {
+    padding-bottom: 120px;
+}

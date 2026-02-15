@@ -1,0 +1,46 @@
+import {StatusBadge} from "../button/badge/StatusBadgeü.tsx";
+
+interface IProps {
+    activePothole?: number;
+    fixedPothole?: number;
+    showBadges: boolean;
+}
+
+const StickyHeader = (props: IProps) => {
+    return (
+        <header
+            className="absolute top-5 left-0 right-0 p-5 z-20 flex justify-between items-center pointer-events-none">
+
+            {/* Brand Box - Dark Modern Style */}
+            <div
+                className="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-3 px-4 rounded-[20px] shadow-2xl pointer-events-auto transition-all hover:scale-105">
+                <div className="flex items-center gap-2">
+                    {/* Küçük bir Orange Dot - "Live" Efekti */}
+                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"/>
+                    <h1 className="text-xl font-black text-white tracking-tighter leading-none">
+                        ÇUKUR<span className="text-orange-500">VAR</span>
+                    </h1>
+                </div>
+                <p className="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1">
+                    İzmir <span className="text-slate-500">Live Feed</span>
+                </p>
+            </div>
+
+            {/* Stats Cluster - Floating Dark badges */}
+            {props.showBadges && <div className="flex gap-2 pointer-events-auto scale-90 origin-right">
+                <StatusBadge
+                    count={props.activePothole ?? 0}
+                    label="Aktif"
+                    variant="danger" // Turuncu-Siyah temada Kırmızı/Turuncu tonları daha uyarıcı olur
+                />
+                <StatusBadge
+                    count={props.fixedPothole ?? 0}
+                    label="Onarıldı"
+                    variant="success"
+                />
+            </div>}
+        </header>
+    );
+};
+
+export default StickyHeader;
