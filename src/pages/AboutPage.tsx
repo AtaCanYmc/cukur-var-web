@@ -1,6 +1,7 @@
 import React from 'react';
 import { PageWrapper } from '../components/layout/PageWrapper';
 import { Shield, Mail, Github, Heart } from 'lucide-react';
+import { BottomNav } from '../components/layout/BottomNav';
 
 export const AboutPage: React.FC = () => {
     return (
@@ -75,6 +76,7 @@ export const AboutPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <BottomNav />
         </PageWrapper>
     );
 };
