@@ -1,19 +1,32 @@
 import { create } from 'zustand';
 
-type UploadStep = 'PREPARING' | 'BLURRING' | 'UPLOADING' | 'SUCCESS';
+export type UploadStep = 'CAMERA' | 'PREVIEW' | 'FORM' | 'UPLOADING' | 'SUCCESS';
 
 interface IUploadState {
     currentStep: UploadStep;
-    progress: number;
+    image: string | null; // Base64
+    description: string;
+    category: string;
+
     setStep: (step: UploadStep) => void;
-    setProgress: (progress: number) => void;
+    setImage: (image: string | null) => void;
+    setDetails: (category: string, description: string) => void;
     resetUpload: () => void;
 }
 
 export const useUploadStore = create<IUploadState>((set) => ({
-    currentStep: 'PREPARING',
-    progress: 0,
+    currentStep: 'CAMERA',
+    image: null,
+    description: '',
+    category: '',
+
     setStep: (step) => set({ currentStep: step }),
-    setProgress: (progress) => set({ progress }),
-    resetUpload: () => set({ currentStep: 'PREPARING', progress: 0 }),
+    setImage: (image) => set({ image }),
+    setDetails: (category, description) => set({ category, description }),
+    resetUpload: () => set({
+        currentStep: 'CAMERA',
+        image: null,
+        description: '',
+        category: ''
+    }),
 }));
