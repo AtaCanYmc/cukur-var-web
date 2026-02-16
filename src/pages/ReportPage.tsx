@@ -61,7 +61,10 @@ export const ReportPage: React.FC = () => {
 
                 {/* 1. Camera Step */}
                 {currentStep === 'CAMERA' && (
-                    <CameraCapture onCapture={handleCameraCapture} />
+                    <CameraCapture
+                        onCapture={handleCameraCapture}
+                        onCancel={() => navigate(ROUTES.HOME)}
+                    />
                 )}
 
                 {/* 2. Preview & Blur Step */}
@@ -77,6 +80,7 @@ export const ReportPage: React.FC = () => {
                     <ReportForm
                         onSubmit={handleReportSubmit}
                         onBack={() => setStep('PREVIEW')}
+                        onCancel={() => navigate(ROUTES.HOME)}
                     />
                 )}
 

@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { useUploadStore } from '../../store/useUploadStore';
-import { Check, AlertTriangle, Lightbulb, Info } from 'lucide-react';
+import { Check, AlertTriangle, Info, X, Car } from 'lucide-react';
 
 interface IProps {
     onSubmit: () => void;
     onBack: () => void;
+    onCancel?: () => void;
 }
 
 const CATEGORIES = [
-    { id: 'pothole', label: 'Çukur', icon: AlertTriangle, color: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' },
-    { id: 'lighting', label: 'Aydınlatma', icon: Lightbulb, color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' },
-    { id: 'other', label: 'Diğer', icon: Info, color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' },
+    { id: 'pothole', label: 'Tehlikeli bir çukurla karşılaştım', icon: AlertTriangle, color: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' },
+    { id: 'damage', label: 'Aracım çukurda hasar gördü', icon: Car, color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' },
+    { id: 'other', label: 'Yolda başka bir sorun yaşıyorum', icon: Info, color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' },
 ];
 
-export const ReportForm: React.FC<IProps> = ({ onSubmit, onBack }) => {
+export const ReportForm: React.FC<IProps> = ({ onSubmit, onBack, onCancel }) => {
     const { category, description, setDetails, image } = useUploadStore();
     const [localDesc, setLocalDesc] = useState(description);
     const [localCat, setLocalCat] = useState(category);
@@ -46,8 +47,8 @@ export const ReportForm: React.FC<IProps> = ({ onSubmit, onBack }) => {
                                 key={cat.id}
                                 onClick={() => setLocalCat(cat.id)}
                                 className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${localCat === cat.id
-                                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
-                                        : 'border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
+                                    ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+                                    : 'border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
                                     }`}
                             >
                                 <div className={`p-2 rounded-full ${cat.color}`}>
@@ -77,14 +78,20 @@ export const ReportForm: React.FC<IProps> = ({ onSubmit, onBack }) => {
                     disabled={!localCat}
                     onClick={handleSubmit}
                     className={`w-full py-4 rounded-2xl font-black text-white text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 ${localCat
-                            ? 'bg-orange-600 hover:bg-orange-700 shadow-orange-500/30'
-                            : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
+                        ? 'bg-orange-600 hover:bg-orange-700 shadow-orange-500/30'
+                        : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
                         }`}
                 >
                     Raporla
                     <Check size={20} />
                 </button>
-
+                <button
+                    onClick={onCancel}
+                    className={`w-full py-4 rounded-2xl font-black text-white text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 bg-slate-300 dark:bg-slate-700 cursor-not-allowed mt-4`}
+                >
+                    İptal
+                    <X size={20} />
+                </button>
             </div>
         </div>
     );
