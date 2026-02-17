@@ -1,11 +1,13 @@
 import React from 'react';
 import { PageWrapper } from '../components/layout/PageWrapper';
 import { Shield, Mail, Github, Heart } from 'lucide-react';
-import { BottomNav } from '../components/layout/BottomNav';
+import { useDevice } from '../hooks/useDevice';
 
 export const AboutPage: React.FC = () => {
+    const { isMobile } = useDevice();
+
     return (
-        <PageWrapper>
+        <PageWrapper showBottomNav={false} showHeader={false} showBadges={false} showHomeButton={isMobile}>
             <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-32">
                 {/* Header Image / Banner */}
                 <div className="h-64 bg-slate-900 relative overflow-hidden flex items-center justify-center">
@@ -76,7 +78,6 @@ export const AboutPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <BottomNav />
         </PageWrapper>
     );
 };

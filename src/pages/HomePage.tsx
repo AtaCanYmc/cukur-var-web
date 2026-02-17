@@ -20,7 +20,7 @@ const HomePage = () => {
     }, [startLoading, stopLoading]);
 
     return (
-        <PageWrapper>
+        <PageWrapper showHeader showBadges showBottomNav>
             <MainMap
                 potholes={[
                     {

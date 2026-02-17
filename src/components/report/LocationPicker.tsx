@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Circle, useMap, useMapEvents } from 'react-leaflet';
 import { useUploadStore } from '../../store/useUploadStore';
-import { Check } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import L from 'leaflet';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -158,9 +158,10 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
                 </button>
                 <button
                     onClick={onCancel}
-                    className="w-full py-4 rounded-2xl font-black text-white text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 bg-slate-300 dark:bg-slate-700 cursor-pointer"
+                    className="w-full py-4 rounded-2xl font-black text-white text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 bg-slate-300 dark:bg-slate-700 cursor-pointer mt-3"
                 >
                     İptal
+                    <X size={20} />
                 </button>
             </div>
         </div>
