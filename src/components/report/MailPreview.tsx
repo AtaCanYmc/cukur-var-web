@@ -49,8 +49,8 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
             return;
         }
 
-        const { subject, body, imageAttachments } = generateMailContent();
-        const mailtoLink = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}&attachments=${encodeURIComponent(imageAttachments.join(','))}`;
+        const { subject, body } = generateMailContent();
+        const mailtoLink = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
         window.location.href = mailtoLink;
 
