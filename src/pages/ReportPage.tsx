@@ -7,6 +7,7 @@ import { ROUTES } from "../routes/paths..ts";
 import { CameraCapture } from "../components/report/CameraCapture";
 import { ImagePreview } from "../components/report/ImagePreview";
 import { ReportForm } from "../components/report/ReportForm";
+import { LocationPicker } from "../components/report/LocationPicker";
 import { useReportService } from "../hooks/useReportService";
 
 export const ReportPage: React.FC = () => {
@@ -26,6 +27,10 @@ export const ReportPage: React.FC = () => {
 
     const handlePreviewConfirm = (finalImage: string) => {
         setImage(finalImage); // Update with potential edits (if any)
+        setStep('LOCATION'); // Go to Location Picker
+    };
+
+    const handleLocationConfirm = () => {
         setStep('FORM');
     };
 
@@ -37,7 +42,10 @@ export const ReportPage: React.FC = () => {
                 image: image || '',
                 category: category,
                 description: description,
-                // Location would be gathered here normally via navigator.geolocation
+                // Location is already in store, need to pass it?
+                // IReportService expects location?: {lat, lng} inside ReportData
+                // Let's grab it from store
+                location: useUploadStore.getState().location || undefined
             });
 
             setStep('SUCCESS');
@@ -75,11 +83,19 @@ export const ReportPage: React.FC = () => {
                     />
                 )}
 
-                {/* 3. Form Step */}
+                {/* 3. Location Picker Step */}
+                {currentStep === 'LOCATION' && (
+                    <LocationPicker
+                        onConfirm={handleLocationConfirm}
+                        onCancel={() => setStep('PREVIEW')}
+                    />
+                )}
+
+                {/* 4. Form Step */}
                 {currentStep === 'FORM' && (
                     <ReportForm
                         onSubmit={handleReportSubmit}
-                        onBack={() => setStep('PREVIEW')}
+                        onBack={() => setStep('LOCATION')}
                         onCancel={() => navigate(ROUTES.HOME)}
                     />
                 )}

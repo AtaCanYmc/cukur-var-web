@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useUploadStore } from '../../store/useUploadStore';
-import { Check, AlertTriangle, Info, X, Car } from 'lucide-react';
+import { Check, AlertTriangle, Info, X, Car, Map } from 'lucide-react';
 
 interface IProps {
     onSubmit: () => void;
@@ -15,7 +15,7 @@ const CATEGORIES = [
 ];
 
 export const ReportForm: React.FC<IProps> = ({ onSubmit, onBack, onCancel }) => {
-    const { category, description, setDetails, image } = useUploadStore();
+    const { category, description, setDetails, image, location } = useUploadStore();
     const [localDesc, setLocalDesc] = useState(description);
     const [localCat, setLocalCat] = useState(category);
 
@@ -31,10 +31,31 @@ export const ReportForm: React.FC<IProps> = ({ onSubmit, onBack, onCancel }) => 
             <div className="w-full flex justify-center mb-6">
                 <div className="relative">
                     <img src={image || ''} alt="Report" className="w-32 h-32 object-cover rounded-2xl shadow-lg border-2 border-white dark:border-slate-700" />
-                    <button onClick={onBack} className="absolute -bottom-2 -right-2 bg-slate-800 text-white text-xs px-2 py-1 rounded-full">Düzenle</button>
                 </div>
             </div>
 
+            {/* Location Info */}
+            <div className="mx-6 mb-6 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded-lg">
+                        <Map size={20} />
+                    </div>
+                    <div>
+                        <div className="text-xs text-slate-500 font-medium">Konum</div>
+                        <div className="text-sm font-bold text-slate-800 dark:text-gray-200">
+                            {location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : "Seçilmedi"}
+                        </div>
+                    </div>
+                </div>
+                <button
+                    onClick={onBack}
+                    className="text-xs text-blue-500 font-bold hover:underline"
+                >
+                    DEĞİŞTİR
+                </button>
+            </div>
+
+            {/* Categories */}
             <div className="flex-1 bg-white dark:bg-slate-800 rounded-t-[32px] p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-none">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Detaylar</h2>
 
