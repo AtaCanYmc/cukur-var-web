@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { RefreshCw, Paperclip, X } from 'lucide-react';
+import { RefreshCw, Paperclip, X, Home } from 'lucide-react';
 
 interface IProps {
     onCapture: (imageSrc: string) => void;
@@ -88,6 +88,10 @@ export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
                         <Paperclip size={18} />
                         Galeriden Seç
                         <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                    </label>
+                    <label className="bg-orange-600 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center gap-2 mt-2">
+                        <Home size={18} />
+                        <button onClick={() => window.location.href = '/'}>Ana Sayfaya Dön</button>
                     </label>
                 </div>
             )}

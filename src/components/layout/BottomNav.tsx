@@ -13,8 +13,7 @@ const NavItem = ({ icon: Icon, active, onClick, label }: any) => {
                 }`}
         >
             <Icon size={24} strokeWidth={active ? 2.5 : 2} />
-            <span
-                className={`text-[9px] font-black mt-1 uppercase tracking-tighter ${active ? 'opacity-100' : 'opacity-0'}`}>
+            <span className={`text-[9px] font-black mt-1 uppercase tracking-tighter opacity-100`}>
                 {label}
             </span>
         </button>
