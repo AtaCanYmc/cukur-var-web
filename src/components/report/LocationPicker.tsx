@@ -9,6 +9,7 @@ import { useTheme } from '../../context/ThemeContext';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import toast from 'react-hot-toast';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -36,9 +37,7 @@ const LocationMarker = () => {
                 if (dist <= MAX_DISTANCE_METERS) {
                     setLocation(e.latlng.lat, e.latlng.lng);
                 } else {
-                    // Maybe show a toast/alert that it's too far
-                    // For now, just don't move the marker or shake it?
-                    alert("Şu anki konumunuzdan en fazla 250 metre uzağı seçebilirsiniz.");
+                    toast.error("Şu anki konumunuzdan en fazla 250 metre uzağı seçebilirsiniz.");
                 }
             } else {
                 setLocation(e.latlng.lat, e.latlng.lng);
@@ -82,12 +81,12 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
                 (error) => {
                     console.error("Konum alınamadı", error);
                     setLoadingLocation(false);
-                    alert("Konum erişimi gerekli. Lütfen izin verin.");
+                    toast.error("Konum erişimi gerekli. Lütfen izin verin.");
                 }
             );
         } else {
             setLoadingLocation(false);
-            alert("Tarayıcınız konum servisini desteklemiyor.");
+            toast.error("Tarayıcınız konum servisini desteklemiyor.");
         }
     }, [location]); // Depend on location to only init once logic usually, but here empty dep mainly. 
     // Actually we want to run this once on mount.

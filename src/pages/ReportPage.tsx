@@ -9,6 +9,7 @@ import { ImagePreview } from "../components/report/ImagePreview";
 import { ReportForm } from "../components/report/ReportForm";
 import { LocationPicker } from "../components/report/LocationPicker";
 import { useReportService } from "../hooks/useReportService";
+import toast from 'react-hot-toast';
 
 export const ReportPage: React.FC = () => {
     const navigate = useNavigate();
@@ -59,7 +60,7 @@ export const ReportPage: React.FC = () => {
             console.error("Upload failed", error);
             // Handle error state (maybe alert or back to form)
             setStep('FORM');
-            alert("Rapor gönderilemedi. Lütfen tekrar deneyin.");
+            toast.error("Rapor gönderilemedi. Lütfen tekrar deneyin.");
         }
     };
 
