@@ -3,19 +3,21 @@ import { MapContainer, TileLayer, Marker, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { createCustomPotholeIcon } from "./types/PotholeMarker.ts";
 import type { IPothole } from "./types/Pothole.ts";
+import { useTheme } from "../../context/ThemeContext";
+import { useDevice } from '../../hooks/useDevice.tsx';
 
 interface IMapProps {
     potholes: IPothole[];
     onMarkerClick: (pothole: IPothole) => void;
 }
 
-import { useTheme } from "../../context/ThemeContext";
 
 // İzmir Merkez Koordinatları
 const IZMIR_CENTER: [number, number] = [38.4237, 27.1428];
 
 export const MainMap: React.FC<IMapProps> = ({ potholes, onMarkerClick }) => {
     const { isDark } = useTheme();
+    const { isMobile } = useDevice();
 
     // Harita stilini (Dark/Light Mode) CartoDB üzerinden çekiyoruz
     const mapUrl = isDark
@@ -27,10 +29,13 @@ export const MainMap: React.FC<IMapProps> = ({ potholes, onMarkerClick }) => {
             <MapContainer
                 center={IZMIR_CENTER}
                 zoom={13}
-                zoomControl={false} // Custom zoom kontrolü için kapattık
+                zoomControl={false}
+                doubleClickZoom={true}
+                touchZoom={true}
+                zoomAnimation={true}
                 className="h-full w-full z-0"
                 attributionControl={false}
-                key={isDark ? 'dark' : 'light'} // Force remount on theme change to prevent tile glitches
+                key={isDark ? 'dark' : 'light'}
             >
                 <TileLayer url={mapUrl} />
 
@@ -46,7 +51,7 @@ export const MainMap: React.FC<IMapProps> = ({ potholes, onMarkerClick }) => {
                 ))}
 
                 {/* Zoom kontrolünü sağ alta, Navigasyonun üzerine alıyoruz */}
-                <ZoomControl position="bottomright" />
+                {!isMobile && <ZoomControl position="bottomright" />}
             </MapContainer>
 
             {/* Harita Üzerinde "Overlay" Gradient - Navigasyonun arkasını karartmak için */}

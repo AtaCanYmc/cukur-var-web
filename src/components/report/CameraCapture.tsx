@@ -91,7 +91,7 @@ export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
                     </label>
                     <label className="bg-orange-600 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center gap-2 mt-2">
                         <Home size={18} />
-                        <button onClick={() => window.location.href = '/'}>Ana Sayfaya Dön</button>
+                        <button onClick={onCancel}>Ana Sayfaya Dön</button>
                     </label>
                 </div>
             )}
