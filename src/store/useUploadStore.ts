@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type UploadStep = 'CAMERA' | 'PREVIEW' | 'LOCATION' | 'FORM' | 'UPLOADING' | 'SUCCESS';
+export type UploadStep = 'CAMERA' | 'PREVIEW' | 'LOCATION' | 'FORM' | 'MAIL_PREVIEW' | 'UPLOADING' | 'SUCCESS';
 
 interface IUploadState {
     currentStep: UploadStep;

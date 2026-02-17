@@ -8,6 +8,7 @@ import { CameraCapture } from "../components/report/CameraCapture";
 import { ImagePreview } from "../components/report/ImagePreview";
 import { ReportForm } from "../components/report/ReportForm";
 import { LocationPicker } from "../components/report/LocationPicker";
+import { MailPreview } from "../components/report/MailPreview";
 import { useReportService } from "../hooks/useReportService";
 import toast from 'react-hot-toast';
 
@@ -35,7 +36,11 @@ export const ReportPage: React.FC = () => {
         setStep('FORM');
     };
 
-    const handleReportSubmit = async () => {
+    const handleReportSubmit = () => {
+        setStep('MAIL_PREVIEW');
+    };
+
+    const handleMailConfirm = async () => {
         setStep('UPLOADING');
 
         try {
@@ -43,9 +48,6 @@ export const ReportPage: React.FC = () => {
                 image: image || '',
                 category: category,
                 description: description,
-                // Location is already in store, need to pass it?
-                // IReportService expects location?: {lat, lng} inside ReportData
-                // Let's grab it from store
                 location: useUploadStore.getState().location || undefined
             });
 
@@ -58,7 +60,6 @@ export const ReportPage: React.FC = () => {
 
         } catch (error) {
             console.error("Upload failed", error);
-            // Handle error state (maybe alert or back to form)
             setStep('FORM');
             toast.error("Rapor gönderilemedi. Lütfen tekrar deneyin.");
         }
@@ -98,6 +99,15 @@ export const ReportPage: React.FC = () => {
                         onSubmit={handleReportSubmit}
                         onBack={() => setStep('LOCATION')}
                         onCancel={() => navigate(ROUTES.HOME)}
+                    />
+                )}
+
+                {/* 5. Mail Preview Step */}
+                {currentStep === 'MAIL_PREVIEW' && (
+                    <MailPreview
+                        onConfirm={handleMailConfirm}
+                        onCancel={() => setStep('FORM')}
+                        images={image ? [image] : []}
                     />
                 )}
 
