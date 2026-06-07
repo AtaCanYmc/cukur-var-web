@@ -1,70 +1,96 @@
-# Çukur Var - Web Uygulaması
+<div align="center">
+  <img src="public/favicon/apple-touch-icon.png" alt="ÇukurVar Logo" width="120" height="120" />
+  <h1>🚧 ÇukurVar 🚧</h1>
+  <p><b>İzmir sokaklarındaki altyapı sorunlarının resmi kurumlara bildirilmesini hızlandıran %100 sunucusuz sivil otomasyon aracı.</b></p>
 
-**Çukur Var**, kullanıcıların çevrelerinde karşılaştıkları altyapı sorunlarını (çukur, bozuk yol, vb.) fotoğraflı ve konum bilgili olarak kolayca raporlayabilmelerini sağlayan modern bir web uygulamasıdır.
+  <!-- Badges -->
+  <p>
+    <img src="https://img.shields.io/badge/React-18.0-blue?style=flat-square&logo=react" alt="React" />
+    <img src="https://img.shields.io/badge/Vite-5.0-646CFF?style=flat-square&logo=vite" alt="Vite" />
+    <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat-square&logo=tailwind-css" alt="TailwindCSS" />
+    <img src="https://img.shields.io/badge/PWA-Ready-success?style=flat-square&logo=pwa" alt="PWA Ready" />
+    <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
+  </p>
+</div>
 
-## 🚀 Teknolojiler ve Kullanılan Araçlar
+---
 
-Proje, modern web standartlarına uygun olarak en güncel teknolojilerle geliştirilmiştir:
+## 🌟 Proje Hakkında
 
-- **React (v19)** - Kullanıcı arayüzü geliştirme
-- **TypeScript** - Statik tip kontrolü ve güvenli kod yazımı
-- **Vite** - Hızlı derleme ve geliştirme ortamı
-- **Tailwind CSS (v4)** - Hızlı ve esnek stil yönetimi
-- **Zustand** - Hafif ve performanslı state (durum) yönetimi
-- **React Router (v7)** - İstemci taraflı sayfa yönlendirmeleri
-- **React Leaflet** - Harita ve konum seçimi entegrasyonu
-- **Framer Motion** - Akıcı ve modern animasyonlar
-- **Lucide React** - Temiz ve ölçeklenebilir ikonlar
-- **React Hot Toast** - Kullanıcı bildirimleri ve uyarılar
+**ÇukurVar**, vatandaşların çevrelerinde gördükleri açık çukurlar, bozuk yollar veya tehlike arz eden altyapı sorunlarını saniyeler içerisinde harita üzerinde işaretleyip, durumu otomatik olarak ilgili kurumlara (Belediye, İZSU vb.) resmi bir e-posta formatında iletmelerini sağlayan **bağımsız bir sivil teknoloji (Civic Tech)** girişimidir.
 
-## 🌟 Özellikler
+Hiçbir sunucu (backend) barındırmayan tamamen istemci taraflı (client-side) mimarisi sayesinde, ihbarlar doğrudan vatandaşın kendi cihazındaki mail uygulaması üzerinden gönderilir ve kişisel veriler %100 güvende kalır.
 
-- 📸 **Kamera Entegrasyonu**: Cihaz kamerası kullanılarak anında fotoğraf çekimi veya galeriden fotoğraf yükleme.
-- 📍 **Konum Seçimi**: Leaflet haritası üzerinden sorun yaşanan konumun işaretlenmesi.
-- 📝 **Detaylı Raporlama**: Sorun kategorisi ve açıklaması ile birlikte form oluşturma.
-- 📥 **Otomatik Kaydetme**: Çekilen fotoğrafların mail eklentisi için otomatik olarak cihaza indirilmesi.
-- ⚡ **Hızlı ve Akıcı Arayüz**: Framer Motion ve Tailwind ile zenginleştirilmiş kullanıcı deneyimi.
+## ✨ Öne Çıkan Özellikler
 
-## 📦 Kurulum ve Çalıştırma
+- 🛡️ **%100 Sunucusuz (Serverless) Mimari:** Projenin bir veritabanı veya sunucusu yoktur. Kullanıcıların verileri, konumları ve e-posta adresleri ASLA kaydedilmez. Tamamen KVKK ve Gizlilik dostudur.
+- 📱 **Progressive Web App (PWA):** ÇukurVar'ı tarayıcınızdan "Ana Ekrana Ekle" diyerek hem mobil cihazlarınıza hem de masaüstü bilgisayarlarınıza tek tıkla yerel bir uygulama (Native App) hissiyle kurabilirsiniz.
+- 📋 **Akıllı Pano ve Rehber Katmanı (Clipboard Automation):** Çekilen çukur fotoğrafları otomatik olarak cihazınızın panosuna (clipboard) kopyalanır ve e-posta uygulamasına geçtiğinizde tek yapmanız gereken "Yapıştır" demektir. Akıllı UI rehberi sizi yönlendirir.
+- 🚀 **Gelişmiş SEO ve Performans:** W3C standartlarına uygun `sitemap.xml`, `robots.txt`, dinamik Open Graph meta etiketleri ve agresif RAM yönetimi (Memory Leak koruması) ile ışık hızında çalışır.
 
-Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
+## 🛠️ Kullanılan Teknoloji Yığını
 
-1. Depoyu bilgisayarınıza klonlayın:
-   ```bash
-   git clone <repo-url>
-   cd cukur-var-web
-   ```
+- **Core:** React 18, TypeScript, Vite
+- **State Management:** Zustand (Atomik State Mimarisi)
+- **Styling:** TailwindCSS v4, Framer Motion (Animasyonlar)
+- **Harita & Konum:** React-Leaflet, OpenStreetMap, CartoDB (Dark/Light Map Tiles)
+- **İkonlar:** Lucide React
+- **Test Altyapısı:** Vitest
 
-2. Bağımlılıkları yükleyin (Önerilen paket yöneticisi: `npm` veya `yarn`):
-   ```bash
-   npm install
-   ```
+## 🚀 Kurulum ve Yerel Geliştirme
 
-3. Geliştirme sunucusunu başlatın:
-   ```bash
-   npm run dev
-   ```
+Projeyi kendi bilgisayarınızda çalıştırmak oldukça basittir. Terminalinizi açın ve aşağıdaki adımları sırasıyla uygulayın:
 
-4. Uygulamayı yerel ağınızdaki diğer cihazlarda (örneğin telefonunuzda kamerayı test etmek için) test etmek istiyorsanız:
-   ```bash
-   npm run host-dev
-   ```
+### 1. Depoyu Klonlayın
+```bash
+git clone https://github.com/AtaCanYmc/cukur-var-web.git
+cd cukur-var-web
+```
 
-## 🏗️ Proje Yapısı
+### 2. Bağımlılıkları Yükleyin
+```bash
+# Güvenlik taramalı temiz kurulum için 'ci' kullanılması önerilir
+npm ci
+```
 
-\`\`\`text
-src/
-├── components/   # Yeniden kullanılabilir arayüz bileşenleri (Layout, Report vb.)
-├── constants/    # Sabit değişkenler ve konfigürasyonlar
-├── context/      # React Context yapısı
-├── data/         # Statik veriler
-├── hooks/        # Özelleştirilmiş React hook'ları
-├── pages/        # Ana sayfa görünümleri (Home, Report, About vb.)
-├── routes/       # Uygulama yönlendirme tanımları
-├── services/     # API ve servis çağrıları
-└── store/        # Zustand global state tanımları
-\`\`\`
+### 3. Ortam Değişkenlerini (Environment Variables) Ayarlayın
+Proje ana dizininde bulunan `.env.example` dosyasını `.env` olarak kopyalayın veya oluşturun:
+```env
+VITE_APP_VERSION=v1.0.0
+VITE_APP_YEAR=2026
+VITE_CONTACT_EMAIL=atacan@example.com
+VITE_GITHUB_URL=https://github.com/AtaCanYmc/cukur-var-web
+VITE_CITY_NAME=İzmir
+```
 
-## 📝 Lisans
+### 4. Geliştirme Sunucusunu Başlatın
+```bash
+npm run dev
+```
+Proje genellikle `http://localhost:5173` adresinde ayağa kalkacaktır.
 
-Bu proje kişisel kullanım ve test amaçlı geliştirilmiştir. 
+### 5. Testleri Çalıştırın
+Sistemdeki tüm iş mantığı ve yardımcı fonksiyon testlerini koşmak için:
+```bash
+npm run test
+```
+
+## 🤝 Katkıda Bulunma (Contributing)
+
+Bu proje açık kaynaklı bir sivil inisiyatiftir ve her türlü katkıya (PR) açıktır. Projeye katkı sağlamak isterseniz:
+
+- **Yeni Kurum Eklemek:** E-postaların gideceği yetkili kurumları ve akıllı eşleştirme anahtar kelimelerini güncellemek için `src/data/institutions.ts` dosyasını düzenleyebilirsiniz.
+- **Mail Şablonunu Değiştirmek:** Otomatik oluşturulan ihbar metnini (Subject/Body) özelleştirmek için `src/utils/mailBuilder.ts` dosyasındaki mantığı güncelleyebilirsiniz.
+- Bir özellik eklemeden önce [Issues](https://github.com/AtaCanYmc/cukur-var-web/issues) kısmında tartışma başlatmanız harika olur!
+
+## ⚖️ Yasal Uyarı ve Sorumluluk Reddi
+
+**ÇukurVar, resmi bir kamu kurumu, belediye iştiraki veya devlet organı değildir.** Bağımsız bir açık kaynak sivil inisiyatif projesidir.
+
+Bu uygulama, tamamen vatandaşların ihbar süreçlerini (e-posta oluşturma, konum bulma) otomatize eden ve hızlandıran tarafsız bir araçtır. Uygulama üzerinden gönderilen ihbarların kurumlar tarafından işleme alınması, çözülmesi veya takibi konusunda **hiçbir garanti verilmez ve hukuki sorumluluk kabul edilmez.** Tüm veriler ve e-posta gönderim işlemi doğrudan kullanıcının kendi cihazında ve kendi e-posta hesabı üzerinden gerçekleşir.
+
+---
+<div align="center">
+  <b>İzmir için sevgiyle ve kodla geliştirildi 🧡</b>
+</div>
