@@ -105,7 +105,7 @@ export const CameraCapture: React.FC<IProps> = ({onCapture, onCancel}) => {
                 <>
                     {/* Kapat Butonu */}
                     <button
-                        onClick={() => window.location.href = '/'} // Basit yönlendirme veya onCancel prop'u
+                        onClick={() => onCancel ? onCancel() : window.location.href = import.meta.env.BASE_URL}
                         className="absolute top-6 right-6 z-30 w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors"
                     >
                         <X size={24}/>

@@ -3,6 +3,7 @@ import StickyHeader from "./StickyHeader.tsx";
 import React from "react";
 import {BottomNav} from './BottomNav.tsx';
 import StickyHomeButton from './StickyBackHomeButton.tsx';
+import { useNavigate } from 'react-router-dom';
 
 interface IProps {
     children: React.ReactNode;
@@ -13,6 +14,8 @@ interface IProps {
 }
 
 export const PageWrapper: React.FC<IProps> = (props: IProps) => {
+    const navigate = useNavigate();
+
     return (
         <motion.div
             initial={{opacity: 0, y: 20}}
@@ -24,7 +27,7 @@ export const PageWrapper: React.FC<IProps> = (props: IProps) => {
             {props.children}
             {props.showBottomNav && <BottomNav/>}
             {props.showHomeButton && <StickyHomeButton onClick={() => {
-                window.location.href = "/";
+                navigate('/');
             }}/>}
         </motion.div>
     );
