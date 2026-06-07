@@ -4,7 +4,8 @@ import {CheckCircle2, ShieldCheck, UploadCloud, MapPin} from 'lucide-react';
 import {useUploadStore} from '../../store/useUploadStore';
 
 export const UploadOverlay: React.FC = () => {
-    const {currentStep, progress} = useUploadStore();
+    const currentStep = useUploadStore(state => state.currentStep);
+    const progress = 100; // Statik ilerleme değeri
 
     const steps = [
         {id: 'PREPARING', label: 'Konum Doğrulanıyor', icon: MapPin},

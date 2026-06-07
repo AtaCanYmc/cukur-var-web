@@ -4,8 +4,14 @@ import { Map, BarChart2, Camera } from 'lucide-react';
 import { ROUTES } from "../../routes/paths..ts";
 import { ActionButton } from "../button/actionButton/ActionButton.tsx";
 
-// NavItem için basit bir yardımcı bileşen (Internal)
-const NavItem = ({ icon: Icon, active, onClick, label }: any) => {
+interface NavItemProps {
+    icon: React.ElementType;
+    active: boolean;
+    onClick: () => void;
+    label: string;
+}
+
+const NavItem = ({ icon: Icon, active, onClick, label }: NavItemProps) => {
     return (
         <button
             onClick={onClick}

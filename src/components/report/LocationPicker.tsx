@@ -11,6 +11,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import toast from 'react-hot-toast';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: markerIcon2x,
@@ -73,23 +74,26 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
                     const { latitude, longitude } = position.coords;
                     setUserLocation(latitude, longitude);
                     // If no location set yet, set to current
-                    if (!location) {
+                    const currentLocation = useUploadStore.getState().location;
+                    if (!currentLocation) {
                         setLocation(latitude, longitude);
                     }
+                     
                     setLoadingLocation(false);
                 },
                 (error) => {
                     console.error("Konum alınamadı", error);
+                     
                     setLoadingLocation(false);
                     toast.error("Konum erişimi gerekli. Lütfen izin verin.");
                 }
             );
         } else {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setLoadingLocation(false);
             toast.error("Tarayıcınız konum servisini desteklemiyor.");
         }
-    }, [location]); // Depend on location to only init once logic usually, but here empty dep mainly. 
-    // Actually we want to run this once on mount.
+    }, [setLocation, setUserLocation]); // Run once on mount
 
     return (
         <div className="flex flex-col h-full w-full bg-slate-50 dark:bg-slate-900 relative">

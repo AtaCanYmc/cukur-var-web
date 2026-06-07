@@ -68,7 +68,7 @@ export const useMailAutomation = (lat?: number, lng?: number) => {
                     }));
                 }
 
-            } catch (err) {
+            } catch {
                 // Sessiz hata yönetimi (Dayanıklılık)
                 setAddress('Konum koordinat bazlı hazırlandı');
                 setInstitutions(prev => prev.map(inst => 

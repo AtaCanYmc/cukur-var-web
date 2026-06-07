@@ -19,6 +19,7 @@ export const ServiceProvider: React.FC<{ children: ReactNode }> = ({ children })
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useServices = (): IServiceContext => {
     const context = useContext(ServiceContext);
     if (!context) {
