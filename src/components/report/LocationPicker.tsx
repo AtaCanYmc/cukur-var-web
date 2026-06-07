@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Circle, useMap, useMapEvents } from 'react-leaflet';
 import { useUploadStore } from '../../store/useUploadStore';
-import { Check, X } from 'lucide-react';
+import { Check, X, AlertTriangle } from 'lucide-react';
 import L from 'leaflet';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -60,6 +60,8 @@ const RecenterMap = ({ lat, lng }: { lat: number; lng: number }) => {
     return null;
 };
 
+const IZMIR_CENTER = { lat: 38.4237, lng: 27.1428 };
+
 export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
     const location = useUploadStore(state => state.location);
     const userLocation = useUploadStore(state => state.userLocation);
@@ -67,6 +69,7 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
     const setLocation = useUploadStore(state => state.setLocation);
     const { isDark } = useTheme();
     const [loadingLocation, setLoadingLocation] = useState(true);
+    const [geoError, setGeoError] = useState(false);
 
     const mapUrl = isDark
         ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
@@ -85,27 +88,34 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
                     }
                      
                     setLoadingLocation(false);
+                    setGeoError(false);
                 },
                 (error) => {
                     console.error("Konum alınamadı", error);
                      
                     setLoadingLocation(false);
-                    toast.error("Konum erişimi gerekli. Lütfen izin verin.");
+                    setGeoError(true);
                 }
             );
         } else {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setLoadingLocation(false);
-            toast.error("Tarayıcınız konum servisini desteklemiyor.");
+            setGeoError(true);
         }
     }, [setLocation, setUserLocation]); // Run once on mount
+
+    const mapCenter = userLocation || IZMIR_CENTER;
 
     return (
         <div className="flex flex-col h-full w-full bg-slate-50 dark:bg-slate-900 relative">
             <div className="flex-1 w-full relative z-0">
-                {userLocation ? (
+                {loadingLocation ? (
+                    <div className="flex items-center justify-center h-full text-slate-500">
+                        Konum alınıyor...
+                    </div>
+                ) : (
                     <MapContainer
-                        center={userLocation}
+                        center={mapCenter}
                         zoom={15}
                         className="h-full w-full"
                         zoomControl={false}
@@ -117,37 +127,48 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
                     >
                         <TileLayer url={mapUrl} />
 
-                        {/* User's Radius Circle */}
-                        <Circle
-                            center={userLocation}
-                            radius={MAX_DISTANCE_METERS}
-                            pathOptions={{ color: 'orange', fillColor: 'orange', fillOpacity: 0.1 }}
-                        />
+                        {userLocation && (
+                            <>
+                                {/* User's Radius Circle */}
+                                <Circle
+                                    center={userLocation}
+                                    radius={MAX_DISTANCE_METERS}
+                                    pathOptions={{ color: 'orange', fillColor: 'orange', fillOpacity: 0.1 }}
+                                />
 
-                        {/* Current Location Marker (User) - Maybe different icon? */}
-                        <Circle
-                            center={userLocation}
-                            radius={5}
-                            pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 1 }}
-                        />
+                                {/* Current Location Marker (User) */}
+                                <Circle
+                                    center={userLocation}
+                                    radius={5}
+                                    pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 1 }}
+                                />
+                            </>
+                        )}
 
                         <LocationMarker />
-                        <RecenterMap lat={userLocation.lat} lng={userLocation.lng} />
+                        {userLocation && <RecenterMap lat={userLocation.lat} lng={userLocation.lng} />}
                     </MapContainer>
-                ) : (
-                    <div className="flex items-center justify-center h-full text-slate-500">
-                        {loadingLocation ? "Konum alınıyor..." : "Konum bilgisi yok."}
-                    </div>
                 )}
 
                 {/* Overlay Info */}
-                <div className="absolute top-4 left-4 right-4 z-[1000] pointer-events-none">
-                    <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 text-center">
-                        <p className="text-sm font-bold text-slate-800 dark:text-white">Konumu İşaretleyin</p>
-                        <p className="text-xs text-slate-500 mt-1">
-                            Şu anki konumunuzdan en fazla <span className="text-orange-600 font-bold">250m</span> uzağı seçebilirsiniz.
-                        </p>
-                    </div>
+                <div className="absolute top-4 left-4 right-4 z-[1000] pointer-events-none flex flex-col gap-2">
+                    {geoError && (
+                        <div className="bg-amber-50 dark:bg-amber-900/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-amber-200 dark:border-amber-800/50 flex gap-3 text-left">
+                            <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={20} />
+                            <p className="text-[11px] font-medium text-amber-800 dark:text-amber-200 leading-relaxed">
+                                Konum izni verilmediği için harita otomatik odaklanamadı. İhbar oluşturmak için haritaya manuel tıklayarak çukurun yerini işaretleyebilir veya tarayıcı ayarlarından izni tekrar açabilirsiniz.
+                            </p>
+                        </div>
+                    )}
+
+                    {!geoError && !loadingLocation && (
+                        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 text-center">
+                            <p className="text-sm font-bold text-slate-800 dark:text-white">Konumu İşaretleyin</p>
+                            <p className="text-xs text-slate-500 mt-1">
+                                Şu anki konumunuzdan en fazla <span className="text-orange-600 font-bold">250m</span> uzağı seçebilirsiniz.
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
 
