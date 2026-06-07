@@ -111,7 +111,7 @@ export const CameraCapture: React.FC<IProps> = ({onCapture, onCancel}) => {
                         <X size={24}/>
                     </button>
 
-                    <div className="absolute bottom-10 w-full flex items-center justify-center gap-8 z-20">
+                    <div className="absolute bottom-16 w-full flex items-center justify-center gap-8 z-20 pb-safe">
                         {/* Dosya Yükleme (Alternatif) */}
                         <label
                             className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white cursor-pointer hover:bg-white/30 transition-all">

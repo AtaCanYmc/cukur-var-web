@@ -54,7 +54,7 @@ export const ReportPage: React.FC = () => {
 
     return (
         <PageWrapper showHeader={false} showBottomNav={false}>
-            <div className="h-screen w-full bg-slate-900 relative overflow-hidden flex flex-col">
+            <div className="h-[100dvh] w-full bg-slate-900 relative overflow-hidden flex flex-col">
 
                 {/* 1. Camera Step */}
                 {currentStep === 'CAMERA' && (

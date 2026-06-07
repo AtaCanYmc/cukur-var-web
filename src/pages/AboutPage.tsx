@@ -8,7 +8,7 @@ export const AboutPage: React.FC = () => {
 
     return (
         <PageWrapper showBottomNav={false} showHeader={false} showBadges={false} showHomeButton={isMobile}>
-            <div className="h-screen overflow-y-auto bg-slate-50 dark:bg-slate-900 pb-32">
+            <div className="h-[100dvh] overflow-y-auto bg-slate-50 dark:bg-slate-900 pb-32">
                 {/* Header / Banner (Yeni Turuncu & Siyah Teması) */}
                 <div className="h-64 bg-slate-950 relative overflow-hidden flex flex-col items-center justify-center">
                     <div className="absolute inset-0 bg-orange-500/5 blur-3xl rounded-full scale-150" />

@@ -44,7 +44,7 @@ export const MainMap: React.FC<IMapProps> = ({potholes, onMarkerClick}) => {
         : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 
     return (
-        <div className="h-screen w-full bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+        <div className="h-[100dvh] w-full bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
             <MapContainer
                 center={IZMIR_CENTER}
                 zoom={13}

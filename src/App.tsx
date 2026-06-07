@@ -28,7 +28,7 @@ const App: React.FC = () => {
                 )}
 
                 {/* 3. Ana Navigasyon ve Sayfa İçerikleri */}
-                <main className="relative h-screen w-full flex flex-col">
+                <main className="relative h-[100dvh] w-full flex flex-col">
                     <AppRouter />
                 </main>
             </div>
