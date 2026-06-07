@@ -57,7 +57,7 @@ export const AboutPage: React.FC = () => {
                         <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">İletişim & Katkı</h2>
 
                         <div className="space-y-3">
-                            <a href="https://github.com/atacan/cukurvar" target="_blank" rel="noopener noreferrer"
+                            <a href={import.meta.env.VITE_GITHUB_URL || "https://github.com/AtaCanYmc"} target="_blank" rel="noopener noreferrer"
                                className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
                                 <Github className="text-slate-900 dark:text-white" size={22} />
                                 <div>
@@ -70,17 +70,17 @@ export const AboutPage: React.FC = () => {
                                 <Mail className="text-orange-500" size={22} />
                                 <div>
                                     <h3 className="font-bold text-slate-900 dark:text-white text-xs">İletişim</h3>
-                                    <p className="text-[11px] text-slate-400">atacan@example.com</p>
+                                    <p className="text-[11px] text-slate-400">{import.meta.env.VITE_CONTACT_EMAIL || "İletişim bilgisi girilmedi"}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="mt-8 text-center border-t border-slate-100 dark:border-slate-700/40 pt-6">
                             <p className="text-[11px] text-slate-400 flex items-center justify-center gap-1">
-                                İzmir'de <Heart size={10} className="text-red-500 fill-red-500" /> ile geliştirildi.
+                                {import.meta.env.VITE_CITY_NAME || "İzmir"}'de <Heart size={10} className="text-red-500 fill-red-500" /> ile geliştirildi.
                             </p>
                             <p className="text-[9px] text-slate-300 dark:text-slate-600 mt-1">
-                                v1.0.0 • 2026
+                                {import.meta.env.VITE_APP_VERSION || "v1.0.0"} • {import.meta.env.VITE_APP_YEAR || "2026"}
                             </p>
                         </div>
                     </div>
