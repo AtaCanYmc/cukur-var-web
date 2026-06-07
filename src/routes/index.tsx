@@ -7,10 +7,16 @@ import { GlobalLoader } from "../components/loader/GlobalLoader.tsx";
 const HomePage = lazy(() => import('../pages/HomePage.tsx'));
 const ReportPage = lazy(() => import('../pages/ReportPage.tsx'));
 const AboutPage = lazy(() => import('../pages/AboutPage.tsx'));
+const NotFoundPage = lazy(() => import('../pages/NotFoundPage.tsx'));
 
 const router = createBrowserRouter([
     {
         path: ROUTES.HOME,
+        errorElement: (
+            <Suspense fallback={<GlobalLoader />}>
+                <NotFoundPage />
+            </Suspense>
+        ),
         element: (
             <Suspense fallback={<GlobalLoader />}>
                 <HomePage />
