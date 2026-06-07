@@ -1,16 +1,13 @@
-name: CI Pipeline
+name: Continuous Integration (CI)
 
 on:
-  push:
-    branches: [ main, master ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
-  build-and-lint:
-    name: Lint, Typecheck, and Build
+  build-and-test:
+    name: Build, Lint and Test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,11 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint Code
+      - name: Run Linter
         run: npm run lint
 
       - name: Run Tests
         run: npm run test
 
-      - name: Build and Typecheck
+      - name: Build Project
         run: npm run build
