@@ -1,4 +1,4 @@
-import {StatusBadge} from "../button/badge/StatusBadgeü.tsx";
+import {StatusBadge} from "../button/badge/StatusBadge.tsx";
 import {useTheme} from "../../context/ThemeContext";
 import {Sun, Moon} from "lucide-react";
 
