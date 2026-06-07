@@ -76,27 +76,18 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         }
     };
 
-    const performBlur = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const performBlur = (e: React.PointerEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
         const rect = canvas.getBoundingClientRect();
-        let clientX, clientY;
-
-        if ('touches' in e) {
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        } else {
-            clientX = (e as React.MouseEvent).clientX;
-            clientY = (e as React.MouseEvent).clientY;
-        }
-
+        
         // Mobil Dokunmatik Optimizasyonu: CSS boyutlarından gerçek çözünürlüğe oranlama (Scale Mapping)
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
 
-        const x = (clientX - rect.left) * scaleX;
-        const y = (clientY - rect.top) * scaleY;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
 
         const ctx = canvas.getContext('2d');
         if (ctx) {
@@ -116,19 +107,29 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         }
     };
 
-    // --- Mouse & Touch Event Handlers ---
-    const handleStart = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    // --- Unified Pointer Event Handlers (iOS Safari & Android Chrome & Desktop Fix) ---
+    const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
         setIsDrawing(true);
+        if (canvasRef.current) {
+            canvasRef.current.setPointerCapture(e.pointerId);
+        }
         performBlur(e);
     };
 
-    const handleMove = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
         if (!isDrawing) return;
         performBlur(e);
     };
 
-    const handleEnd = () => {
+    const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
         setIsDrawing(false);
+        if (canvasRef.current) {
+            try {
+                canvasRef.current.releasePointerCapture(e.pointerId);
+            } catch {
+                // Ignore capture release errors
+            }
+        }
     };
 
     const handleConfirm = () => {
@@ -159,15 +160,12 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             <div className="flex-1 w-full flex items-center justify-center overflow-hidden relative p-4">
                 <canvas
                     ref={canvasRef}
-                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 touch-none max-w-full max-h-[70vh] object-contain"
-                    onMouseDown={handleStart}
-                    onMouseMove={handleMove}
-                    onMouseUp={handleEnd}
-                    onMouseLeave={handleEnd}
-                    onTouchStart={handleStart}
-                    onTouchMove={handleMove}
-                    onTouchEnd={handleEnd}
-                    onTouchCancel={handleEnd}
+                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 max-w-full max-h-[70vh] object-contain"
+                    style={{ touchAction: 'none' }}
+                    onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={handlePointerUp}
+                    onPointerCancel={handlePointerUp}
                 />
 
                 <div className="absolute top-6 bg-black/50 text-white px-4 py-2 rounded-full text-xs font-bold pointer-events-none backdrop-blur-sm">
