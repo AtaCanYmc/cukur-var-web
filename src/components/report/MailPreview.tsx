@@ -1,10 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import {useUploadStore} from '../../store/useUploadStore';
-import {INITIAL_INSTITUTIONS, type Institution} from '../../data/institutions';
-import {Check, ChevronRight, Mail, MapPin} from 'lucide-react';
+import React from 'react';
+import { useUploadStore } from '../../store/useUploadStore';
+import { Check, ChevronRight, Mail, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
-import {MAIL_TEMPLATES} from '../../constants/MailTemplates';
-import {useNominatim} from '../../hooks/useNominatim';
+import { useMailAutomation } from '../../hooks/useMailAutomation';
+import { buildMailContent } from '../../utils/mailBuilder';
 
 interface IProps {
     onConfirm: () => void;
@@ -13,60 +12,29 @@ interface IProps {
 }
 
 export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) => {
-    const { category, description, location } = useUploadStore();
-    const [institutions, setInstitutions] = useState<Institution[]>(INITIAL_INSTITUTIONS);
-    const { address, rawAddress, loading: addressLoading } = useNominatim(location?.lat, location?.lng);
+    // Zustand Atomic Selectors - Performans İyileştirmesi
+    const category = useUploadStore(state => state.category);
+    const description = useUploadStore(state => state.description);
+    const location = useUploadStore(state => state.location);
+    const resetUpload = useUploadStore(state => state.resetUpload);
 
-    useEffect(() => {
-        if (!rawAddress) return;
+    // Adres çözme ve akıllı kurum seçme otomasyonu
+    const { 
+        institutions, 
+        toggleInstitution, 
+        getSelectedEmails, 
+        address, 
+        loading: addressLoading 
+    } = useMailAutomation(location?.lat, location?.lng);
 
-        const districtName = (rawAddress.country || rawAddress.town || rawAddress.suburb || rawAddress.city_district || '').toLocaleLowerCase('tr-TR');
-        
-        if (districtName) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setInstitutions(prev => prev.map(inst => {
-                if (inst.id === 'izmir_bb') return { ...inst, selected: true };
-                
-                const instNameNormalized = inst.name.toLocaleLowerCase('tr-TR');
-                // Normalize terms to effectively match
-                const districtWords = districtName.split(/\s+/);
-                const isMatch = districtWords.some(word => word.length > 3 && instNameNormalized.includes(word)) || instNameNormalized.includes(districtName);
-
-                if (isMatch || inst.selected) {
-                    return { ...inst, selected: true };
-                }
-                
-                return { ...inst, selected: false };
-            }));
-        }
-    }, [rawAddress]);
-
-    const toggleInstitution = (id: string) => {
-        setInstitutions(prev => prev.map(inst =>
-            inst.id === id ? { ...inst, selected: !inst.selected } : inst
-        ));
-    };
-
-    const getSelectedEmails = () => {
-        return institutions.filter(i => i.selected).map(i => i.email).join(',');
-    };
-
-    const generateMailContent = () => {
-        const coords = location ? `${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}` : 'Konum bilgisi yok';
-        const googleMapsLink = location ? `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}` : '';
-        const subject = `Çukur İhbarı: ${category === 'pothole' ? 'Tehlikeli Çukur' : category} - ${new Date().toLocaleDateString('tr-TR')}`;
-        const imageAttachments = images.map(image => `data:image/jpeg;base64,${image}`);
-
-        const body = MAIL_TEMPLATES[category]({
-            locationName: address || 'Belirtilmemiş / İzmir',
-            coordinates: coords,
-            date: new Date().toLocaleDateString('tr-TR'),
-            googleMapsLink: googleMapsLink,
-            description: description,
-        });
-
-        return { subject, body, imageAttachments };
-    };
+    // E-posta önizlemesi için içerik üretimi (Bileşenden ayrıldı)
+    const { subject, body } = buildMailContent({ 
+        category, 
+        description, 
+        location, 
+        address, 
+        images 
+    });
 
     const handleSendMail = () => {
         const emails = getSelectedEmails();
@@ -75,17 +43,24 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
             return;
         }
 
-        const { subject, body } = generateMailContent();
+        toast.success(
+            "Fotoğraf cihazınıza indirildi! Lütfen açılacak mail ekranında ataç butonuna basarak bu fotoğrafı ekleyin",
+            { duration: 6000, icon: '📎' }
+        );
 
+        // Mail istemcisini tetikle
         window.location.href = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-        // Proceed to success after a short delay to allow mail client to open
+        // İşlem tamamlandıktan sonra başarılı sayfasına geç
         setTimeout(() => {
             onConfirm();
+            
+            // Mail client'ın içeriği alabilmesi için ekstra bir süre tanıyıp bellek temizliği yapıyoruz (Memory Leak Önlemi)
+            setTimeout(() => {
+                resetUpload();
+            }, 1500);
         }, 1500);
     };
-
-    const { subject, body } = generateMailContent();
 
     return (
         <div className="h-full w-full bg-slate-50 dark:bg-slate-900 flex flex-col">
@@ -94,7 +69,7 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Kurum Seçimi</h2>
                     <p className="text-sm text-slate-500 mb-4">Raporun gönderileceği kurumları seçin.</p>
 
-                    <div className="flex overflow-x-auto gap-3 pb-4 -ml-2 mr-2 px-6 snap-x hide-scrollbar">
+                    <div className="flex overflow-x-auto gap-3 pb-4 px-6 snap-x hide-scrollbar">
                         {institutions.map(inst => (
                             <div
                                 key={inst.id}
@@ -105,8 +80,10 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                                     }`}
                             >
                                 <div className="flex items-start justify-between gap-2">
-                                    <span className="font-bold text-sm text-slate-700 dark:text-slate-200 line-clamp-2 leading-tight">{inst.name}</span>
-                                    <div className={`shrink-0 w-5 h-5 rounded flex items-center justify-center border ${inst.selected ? 'bg-orange-500 border-orange-500 text-white' : 'border-slate-300'}`}>
+                                    <span className="font-bold text-sm text-slate-700 dark:text-slate-200 line-clamp-2 leading-tight">
+                                        {inst.name}
+                                    </span>
+                                    <div className={`shrink-0 w-5 h-5 rounded flex items-center justify-center border transition-colors ${inst.selected ? 'bg-orange-500 border-orange-500 text-white' : 'border-slate-300'}`}>
                                         {inst.selected && <Check size={14} strokeWidth={3} />}
                                     </div>
                                 </div>
@@ -118,10 +95,12 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
 
                 <div className="mb-6">
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">E-Posta Önizleme</h2>
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
                         <div className="border-b border-slate-100 dark:border-slate-700 pb-3 mb-3">
                             <div className="text-xs text-slate-400 font-bold uppercase mb-1">Alıcı</div>
-                            <div className="text-sm text-slate-800 dark:text-slate-200 break-words">{getSelectedEmails() || '(Seçim yok)'}</div>
+                            <div className="text-sm text-slate-800 dark:text-slate-200 break-words">
+                                {getSelectedEmails() || '(Seçim yok)'}
+                            </div>
                         </div>
                         <div className="border-b border-slate-100 dark:border-slate-700 pb-3 mb-3">
                             <div className="text-xs text-slate-400 font-bold uppercase mb-1">Konu</div>
@@ -131,7 +110,11 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                             <div className="text-xs text-slate-400 font-bold uppercase mb-1">Açık Adres</div>
                             <div className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-start gap-1">
                                 <MapPin size={16} className="text-orange-500 mt-0.5 shrink-0" />
-                                {addressLoading ? <span className="animate-pulse">Adres çözümleniyor...</span> : (address || 'Konum bulunamadı')}
+                                {addressLoading ? (
+                                    <span className="animate-pulse">Adres çözümleniyor...</span>
+                                ) : (
+                                    <span>{address}</span>
+                                )}
                             </div>
                         </div>
                         <div>
@@ -143,7 +126,6 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                     </div>
                 </div>
 
-                {/*Fotoğrafı maile eklemeyi unutmayın notu*/}
                 <div className="text-sm text-slate-500 italic">
                     (*) Çektiğiniz fotoğrafı maile eklemeyi unutmayınız. Fotoğraf otomatik olarak cihazınıza indirilecektir.
                 </div>
@@ -160,7 +142,7 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                 </button>
                 <button
                     onClick={onCancel}
-                    className="w-full text-center text-slate-400 font-bold text-sm mt-4 hover:text-slate-600"
+                    className="w-full text-center text-slate-400 font-bold text-sm mt-4 hover:text-slate-600 transition-colors"
                 >
                     Vazgeç ve Düzenle
                 </button>
