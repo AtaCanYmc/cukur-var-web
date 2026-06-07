@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /about
+
+# Botların form adımlarını ve dinamik rotaları taramasını engelleyerek tarama bütçesini koruyalım
+Disallow: /report/*
+Disallow: /success
+Disallow: /uploading
+
+# Assets (Gerekli statik dosyaların taranmasına izin verin, ancak özel JS chunk'ları göz ardı edilebilir)
+Allow: /assets/
+Allow: /cukurvar-favicon/
+
+Sitemap: https://cukurvar.com/sitemap.xml
