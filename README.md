@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# Çukur Var - Web Uygulaması
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Çukur Var**, kullanıcıların çevrelerinde karşılaştıkları altyapı sorunlarını (çukur, bozuk yol, vb.) fotoğraflı ve konum bilgili olarak kolayca raporlayabilmelerini sağlayan modern bir web uygulamasıdır.
 
-Currently, two official plugins are available:
+## 🚀 Teknolojiler ve Kullanılan Araçlar
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Proje, modern web standartlarına uygun olarak en güncel teknolojilerle geliştirilmiştir:
 
-## React Compiler
+- **React (v19)** - Kullanıcı arayüzü geliştirme
+- **TypeScript** - Statik tip kontrolü ve güvenli kod yazımı
+- **Vite** - Hızlı derleme ve geliştirme ortamı
+- **Tailwind CSS (v4)** - Hızlı ve esnek stil yönetimi
+- **Zustand** - Hafif ve performanslı state (durum) yönetimi
+- **React Router (v7)** - İstemci taraflı sayfa yönlendirmeleri
+- **React Leaflet** - Harita ve konum seçimi entegrasyonu
+- **Framer Motion** - Akıcı ve modern animasyonlar
+- **Lucide React** - Temiz ve ölçeklenebilir ikonlar
+- **React Hot Toast** - Kullanıcı bildirimleri ve uyarılar
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🌟 Özellikler
 
-## Expanding the ESLint configuration
+- 📸 **Kamera Entegrasyonu**: Cihaz kamerası kullanılarak anında fotoğraf çekimi veya galeriden fotoğraf yükleme.
+- 📍 **Konum Seçimi**: Leaflet haritası üzerinden sorun yaşanan konumun işaretlenmesi.
+- 📝 **Detaylı Raporlama**: Sorun kategorisi ve açıklaması ile birlikte form oluşturma.
+- 📥 **Otomatik Kaydetme**: Çekilen fotoğrafların mail eklentisi için otomatik olarak cihaza indirilmesi.
+- ⚡ **Hızlı ve Akıcı Arayüz**: Framer Motion ve Tailwind ile zenginleştirilmiş kullanıcı deneyimi.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📦 Kurulum ve Çalıştırma
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Depoyu bilgisayarınıza klonlayın:
+   ```bash
+   git clone <repo-url>
+   cd cukur-var-web
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+2. Bağımlılıkları yükleyin (Önerilen paket yöneticisi: `npm` veya `yarn`):
+   ```bash
+   npm install
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3. Geliştirme sunucusunu başlatın:
+   ```bash
+   npm run dev
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+4. Uygulamayı yerel ağınızdaki diğer cihazlarda (örneğin telefonunuzda kamerayı test etmek için) test etmek istiyorsanız:
+   ```bash
+   npm run host-dev
+   ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🏗️ Proje Yapısı
+
+\`\`\`text
+src/
+├── components/   # Yeniden kullanılabilir arayüz bileşenleri (Layout, Report vb.)
+├── constants/    # Sabit değişkenler ve konfigürasyonlar
+├── context/      # React Context yapısı
+├── data/         # Statik veriler
+├── hooks/        # Özelleştirilmiş React hook'ları
+├── pages/        # Ana sayfa görünümleri (Home, Report, About vb.)
+├── routes/       # Uygulama yönlendirme tanımları
+├── services/     # API ve servis çağrıları
+└── store/        # Zustand global state tanımları
+\`\`\`
+
+## 📝 Lisans
+
+Bu proje kişisel kullanım ve test amaçlı geliştirilmiştir. 

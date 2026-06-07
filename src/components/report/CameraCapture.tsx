@@ -33,7 +33,8 @@ export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
     };
 
     useEffect(() => {
-        startCamera();
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        startCamera().then(r => r);
         return () => stopCamera();
     }, []);
 
@@ -50,6 +51,15 @@ export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
             if (context) {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 const imageSrc = canvas.toDataURL('image/jpeg', 0.8);
+                
+                // Fotoğrafı galeriye kaydetmek için indirme tetikle
+                const link = document.createElement('a');
+                link.href = imageSrc;
+                link.download = `cukur-var-${new Date().getTime()}.jpg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
                 stopCamera();
                 onCapture(imageSrc);
             }
