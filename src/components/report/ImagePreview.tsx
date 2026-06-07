@@ -20,6 +20,11 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
                 // eslint-disable-next-line react-hooks/immutability
                 drawImage(img);
             };
+            // Memory leak önlemi: Component unmount olduğunda objeyi temizle
+            return () => {
+                img.onload = null;
+                img.src = '';
+            };
         }
     }, [image]);
 
