@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageWrapper } from '../components/layout/PageWrapper';
-import { Mail, Github, Heart, EyeOff, AlertTriangle } from 'lucide-react';
+import { Mail, Github, Heart, EyeOff, AlertTriangle, Info } from 'lucide-react';
 import { useDevice } from '../hooks/useDevice';
 
 export const AboutPage: React.FC = () => {
@@ -63,6 +63,27 @@ export const AboutPage: React.FC = () => {
                         <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed space-y-2">
                             ÇukurVar, resmi bir kamu kurumu, belediye iştiraki veya devlet organı değildir; bağımsız bir açık kaynak sivil inisiyatif projesidir. Uygulama, ihbar süreçlerinin takibini veya sorunların kurumlar tarafından çözülme garantisini taahhüt etmez. Gönderilen e-postaların içeriği ve eklenen görsellerin yasal sorumluluğu tamamen kullanıcının kendisine aittir.
                         </p>
+                    </div>
+
+                    {/* Attributions / Veri Sağlayıcıları ve Lisanslar */}
+                    <div className="bg-slate-100/60 dark:bg-slate-800/60 rounded-3xl p-6 mb-6 border border-slate-200 dark:border-slate-700/60">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-blue-500 text-white rounded-xl">
+                                <Info size={18} />
+                            </div>
+                            <h2 className="text-base font-bold text-slate-900 dark:text-white">Açık Kaynak & Lisanslar</h2>
+                        </div>
+                        <div className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed space-y-3">
+                            <p>
+                                <strong>Harita Verileri:</strong> Uygulama içindeki harita verileri <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">© OpenStreetMap</a> katkıda bulunanlarına aittir (ODbL lisansı ile sağlanır).
+                            </p>
+                            <p>
+                                <strong>Konum Çözümleme:</strong> Ters geocoding işlemleri <a href="https://nominatim.org/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Nominatim API</a> altyapısı kullanılarak OpenStreetMap verileri üzerinden sağlanmaktadır.
+                            </p>
+                            <p>
+                                <strong>Açık Kaynak Yazılım:</strong> Bu projenin kodları MIT lisansı ile GitHub üzerinde açık kaynak olarak paylaşılmıştır.
+                            </p>
+                        </div>
                     </div>
 
                     {/* Developer / Contact */}
