@@ -9,7 +9,7 @@ interface IProps {
 }
 
 export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
-    const { image } = useUploadStore();
+    const image = useUploadStore(state => state.image);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {

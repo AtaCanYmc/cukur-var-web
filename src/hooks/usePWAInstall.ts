@@ -13,18 +13,17 @@ interface BeforeInstallPromptEvent extends Event {
 export const usePWAInstall = () => {
     const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [isInstallable, setIsInstallable] = useState(false);
-    const [isInstalled, setIsInstalled] = useState(false);
-    const [isIOS, setIsIOS] = useState(false);
+    const [isInstalled, setIsInstalled] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return window.matchMedia('(display-mode: standalone)').matches || ('standalone' in navigator && (navigator as any).standalone === true);
+    });
+    const [isIOS] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    });
 
     useEffect(() => {
-        // iOS Tespiti
-        const userAgent = window.navigator.userAgent.toLowerCase();
-        const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
-        setIsIOS(isIosDevice);
-
-        // Uygulama zaten yüklü mü? (Standalone modu kontrolü)
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || ('standalone' in navigator && (navigator as any).standalone === true);
-        setIsInstalled(isStandalone);
 
         const handleBeforeInstallPrompt = (e: Event) => {
             e.preventDefault(); // Varsayılan tarayıcı banner'ını engelle

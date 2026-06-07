@@ -15,7 +15,11 @@ const CATEGORIES = [
 ];
 
 export const ReportForm: React.FC<IProps> = ({ onSubmit, onBack, onCancel }) => {
-    const { category, description, setDetails, image, location } = useUploadStore();
+    const category = useUploadStore(state => state.category);
+    const description = useUploadStore(state => state.description);
+    const setDetails = useUploadStore(state => state.setDetails);
+    const image = useUploadStore(state => state.image);
+    const location = useUploadStore(state => state.location);
     const [localDesc, setLocalDesc] = useState(description);
     const [localCat, setLocalCat] = useState(category);
 

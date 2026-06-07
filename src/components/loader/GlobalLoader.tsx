@@ -2,7 +2,8 @@ import React from 'react';
 import { useUIStore } from '../../store/useUIStore';
 
 export const GlobalLoader: React.FC = () => {
-    const { isLoading, loadingMessage } = useUIStore();
+    const isLoading = useUIStore(state => state.isLoading);
+    const loadingMessage = useUIStore(state => state.loadingMessage);
 
     if (!isLoading) return null;
 

@@ -9,13 +9,16 @@ import { ImagePreview } from "../components/report/ImagePreview";
 import { ReportForm } from "../components/report/ReportForm";
 import { LocationPicker } from "../components/report/LocationPicker";
 import { MailPreview } from "../components/report/MailPreview";
-import { useReportService } from "../hooks/useReportService";
-import toast from 'react-hot-toast';
 
 export const ReportPage: React.FC = () => {
     const navigate = useNavigate();
-    const { currentStep, setStep, setImage, resetUpload, image, category, description } = useUploadStore();
-    const service = useReportService();
+    
+    // Zustand Atomic Selectors
+    const currentStep = useUploadStore(state => state.currentStep);
+    const setStep = useUploadStore(state => state.setStep);
+    const setImage = useUploadStore(state => state.setImage);
+    const resetUpload = useUploadStore(state => state.resetUpload);
+    const image = useUploadStore(state => state.image);
 
     // Reset on mount
     useEffect(() => {
@@ -28,8 +31,8 @@ export const ReportPage: React.FC = () => {
     };
 
     const handlePreviewConfirm = (finalImage: string) => {
-        setImage(finalImage); // Update with potential edits (if any)
-        setStep('LOCATION'); // Go to Location Picker
+        setImage(finalImage);
+        setStep('LOCATION');
     };
 
     const handleLocationConfirm = () => {
@@ -40,29 +43,13 @@ export const ReportPage: React.FC = () => {
         setStep('MAIL_PREVIEW');
     };
 
-    const handleMailConfirm = async () => {
-        setStep('UPLOADING');
+    const handleMailConfirm = () => {
+        setStep('SUCCESS');
 
-        try {
-            await service.createReport({
-                image: image || '',
-                category: category,
-                description: description,
-                location: useUploadStore.getState().location || undefined
-            });
-
-            setStep('SUCCESS');
-
-            // Redirect after delay
-            setTimeout(() => {
-                navigate(ROUTES.HOME);
-            }, 2000);
-
-        } catch (error) {
-            console.error("Upload failed", error);
-            setStep('FORM');
-            toast.error("Rapor gönderilemedi. Lütfen tekrar deneyin.");
-        }
+        // Redirect after delay
+        setTimeout(() => {
+            navigate(ROUTES.HOME);
+        }, 2000);
     };
 
     return (

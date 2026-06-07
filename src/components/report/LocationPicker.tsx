@@ -28,7 +28,9 @@ const MAX_DISTANCE_METERS = 250;
 
 // Helper to handle map clicks
 const LocationMarker = () => {
-    const { location, setLocation, userLocation } = useUploadStore();
+    const location = useUploadStore(state => state.location);
+    const setLocation = useUploadStore(state => state.setLocation);
+    const userLocation = useUploadStore(state => state.userLocation);
 
     useMapEvents({
         click(e) {
@@ -59,7 +61,10 @@ const RecenterMap = ({ lat, lng }: { lat: number; lng: number }) => {
 };
 
 export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
-    const { location, userLocation, setUserLocation, setLocation } = useUploadStore();
+    const location = useUploadStore(state => state.location);
+    const userLocation = useUploadStore(state => state.userLocation);
+    const setUserLocation = useUploadStore(state => state.setUserLocation);
+    const setLocation = useUploadStore(state => state.setLocation);
     const { isDark } = useTheme();
     const [loadingLocation, setLoadingLocation] = useState(true);
 

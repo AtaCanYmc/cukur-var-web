@@ -7,7 +7,8 @@ import {PageWrapper} from "../components/layout/PageWrapper.tsx";
 import {PWAInstallBanner} from "../components/layout/PWAInstallBanner.tsx";
 
 const HomePage = () => {
-    const {startLoading, stopLoading} = useUIStore();
+    const startLoading = useUIStore(state => state.startLoading);
+    const stopLoading = useUIStore(state => state.stopLoading);
 
     useEffect(() => {
         // Veri çekme simülasyonu
