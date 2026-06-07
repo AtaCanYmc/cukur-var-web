@@ -10,11 +10,11 @@ const HomePage = () => {
 
     useEffect(() => {
         // Veri çekme simülasyonu
-        startLoading('Çukurlar Haritalanıyor...');
+        startLoading('Yükleniyor...');
 
         const timer = setTimeout(() => {
             stopLoading();
-        }, 2000);
+        }, 500);
 
         return () => clearTimeout(timer);
     }, [startLoading, stopLoading]);

@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {useUploadStore} from '../../store/useUploadStore';
 import {INITIAL_INSTITUTIONS, type Institution} from '../../data/institutions';
-import {Check, ChevronRight, Mail} from 'lucide-react';
+import {Check, ChevronRight, Mail, MapPin} from 'lucide-react';
 import toast from 'react-hot-toast';
 import {MAIL_TEMPLATES} from '../../constants/MailTemplates';
+import {useNominatim} from '../../hooks/useNominatim';
 
 interface IProps {
     onConfirm: () => void;
@@ -14,6 +15,7 @@ interface IProps {
 export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) => {
     const { category, description, location } = useUploadStore();
     const [institutions, setInstitutions] = useState<Institution[]>(INITIAL_INSTITUTIONS);
+    const { address, loading: addressLoading } = useNominatim(location?.lat, location?.lng);
 
     const toggleInstitution = (id: string) => {
         setInstitutions(prev => prev.map(inst =>
@@ -32,7 +34,7 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
         const imageAttachments = images.map(image => `data:image/jpeg;base64,${image}`);
 
         const body = MAIL_TEMPLATES[category]({
-            locationName: 'İzmir',
+            locationName: address || 'Belirtilmemiş / İzmir',
             coordinates: coords,
             date: new Date().toLocaleDateString('tr-TR'),
             googleMapsLink: googleMapsLink,
@@ -50,12 +52,13 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
         }
 
         const { subject, body } = generateMailContent();
+
         window.location.href = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
         // Proceed to success after a short delay to allow mail client to open
         setTimeout(() => {
             onConfirm();
-        }, 1000);
+        }, 1500);
     };
 
     const { subject, body } = generateMailContent();
@@ -99,6 +102,13 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                         <div className="border-b border-slate-100 dark:border-slate-700 pb-3 mb-3">
                             <div className="text-xs text-slate-400 font-bold uppercase mb-1">Konu</div>
                             <div className="text-sm font-bold text-slate-800 dark:text-slate-200">{subject}</div>
+                        </div>
+                        <div className="border-b border-slate-100 dark:border-slate-700 pb-3 mb-3">
+                            <div className="text-xs text-slate-400 font-bold uppercase mb-1">Açık Adres</div>
+                            <div className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-start gap-1">
+                                <MapPin size={16} className="text-orange-500 mt-0.5 shrink-0" />
+                                {addressLoading ? <span className="animate-pulse">Adres çözümleniyor...</span> : (address || 'Konum bulunamadı')}
+                            </div>
                         </div>
                         <div>
                             <div className="text-xs text-slate-400 font-bold uppercase mb-1">İçerik</div>

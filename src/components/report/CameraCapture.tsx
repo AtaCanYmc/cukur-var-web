@@ -51,15 +51,6 @@ export const CameraCapture: React.FC<IProps> = ({onCapture, onCancel}) => {
             if (context) {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 const imageSrc = canvas.toDataURL('image/jpeg', 0.8);
-
-                // Fotoğrafı galeriye kaydetmek için indirme tetikle
-                const link = document.createElement('a');
-                link.href = imageSrc;
-                link.download = `cukur-var-${new Date().getTime()}.jpg`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
                 stopCamera();
                 onCapture(imageSrc);
             }
@@ -140,7 +131,7 @@ export const CameraCapture: React.FC<IProps> = ({onCapture, onCancel}) => {
                         <button
                             onClick={() => {
                                 stopCamera();
-                                startCamera();
+                                startCamera().then(r => r);
                             }}
                             className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition-all"
                         >

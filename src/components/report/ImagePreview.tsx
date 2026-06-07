@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useUploadStore } from '../../store/useUploadStore';
 import { Eraser, Check, RotateCcw } from 'lucide-react';
+import toast from "react-hot-toast";
 
 interface IProps {
     onConfirm: (finalImage: string) => void;
@@ -16,6 +17,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             const img = new Image();
             img.src = image;
             img.onload = () => {
+                // eslint-disable-next-line react-hooks/immutability
                 drawImage(img);
             };
         }
@@ -67,7 +69,23 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
 
     const handleConfirm = () => {
         if (canvasRef.current) {
-            onConfirm(canvasRef.current.toDataURL('image/jpeg', 0.8));
+            const imageSrc = canvasRef.current.toDataURL('image/jpeg', 0.8);
+
+            toast.success(
+                "İndirme Başlıyor. Lütfen açılacak mail ekranında ataç butonuna basarak bu fotoğrafı ekleyin",
+                { duration: 6000, icon: '📎' }
+            );
+
+            // Fotoğrafı galeriye kaydetmek için indirme tetikle
+            const link = document.createElement('a');
+            link.href = imageSrc;
+            link.download = `cukur-var-${new Date().getTime()}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => {
+                onConfirm(imageSrc);
+            }, 1500);
         }
     };
 
