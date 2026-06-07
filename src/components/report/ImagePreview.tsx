@@ -11,19 +11,18 @@ interface IProps {
 export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
     const image = useUploadStore(state => state.image);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
     const [isDrawing, setIsDrawing] = useState(false);
 
     useEffect(() => {
-        const objectUrl: string | null = null;
+        let objectUrl: string | null = null;
         if (image) {
             const img = new Image();
             img.src = image;
             img.onload = () => {
-                // eslint-disable-next-line react-hooks/immutability
-                drawImage(img);
+                initializeCanvas(img);
             };
             
-            // Memory Management: Component unmount olduğunda objeyi ve referansları temizle
             return () => {
                 img.onload = null;
                 img.src = '';
@@ -51,7 +50,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         };
     }, []);
 
-    const drawImage = (img: HTMLImageElement) => {
+    const initializeCanvas = (img: HTMLImageElement) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -66,23 +65,36 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             drawHeight = Math.floor(drawHeight * ratio);
         }
 
-        // Canvas asıl çözünürlüğü (arka plan pikselleri)
+        // Ana ekran (Görünür Canvas)
         canvas.width = drawWidth;
         canvas.height = drawHeight;
-
         const ctx = canvas.getContext('2d');
         if (ctx) {
             ctx.drawImage(img, 0, 0, drawWidth, drawHeight);
+        }
+
+        // Safari Fix: Arka Planda Kliplenecek Bulanık Canvas (Offscreen Pre-Blur)
+        const offscreen = document.createElement('canvas');
+        offscreen.width = drawWidth;
+        offscreen.height = drawHeight;
+        const offCtx = offscreen.getContext('2d');
+        
+        if (offCtx) {
+            // Görsel arka planda SADECE BİR KERE blurlanır, bu Safari'nin rendering bug'larını engeller.
+            offCtx.filter = 'blur(20px)';
+            offCtx.drawImage(img, 0, 0, drawWidth, drawHeight);
+            offscreenCanvasRef.current = offscreen;
         }
     };
 
     const performBlur = (e: React.PointerEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        const offscreen = offscreenCanvasRef.current;
+        if (!canvas || !offscreen) return;
 
         const rect = canvas.getBoundingClientRect();
         
-        // Mobil Dokunmatik Optimizasyonu: CSS boyutlarından gerçek çözünürlüğe oranlama (Scale Mapping)
+        // Ekrana basılan yerin (CSS) gerçek canvas çözünürlüğündeki X,Y karşılığı
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
 
@@ -91,23 +103,21 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
 
         const ctx = canvas.getContext('2d');
         if (ctx) {
-            // Fırça boyutunu canvas çözünürlüğüne göre dinamik ayarla (%5'i kadar)
-            const size = Math.max(40, canvas.width * 0.05); 
+            const radius = Math.max(30, canvas.width * 0.04); // Dairesel fırça yarıçapı
 
-            ctx.filter = 'blur(15px)';
-            ctx.drawImage(
-                canvas, 
-                Math.max(0, x - size / 2), 
-                Math.max(0, y - size / 2), 
-                size, size, 
-                x - size / 2, y - size / 2, 
-                size, size
-            );
-            ctx.filter = 'none'; // Reset filter
+            // Dairesel Kırpma Maskesi (Circular Clip Mask)
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+            ctx.clip(); // Sadece bu dairenin içine çizim yapmasına izin ver
+            
+            // Önceden blurlanmış harika görselden tam o dairenin üstüne pikselleri kopyala!
+            ctx.drawImage(offscreen, 0, 0, canvas.width, canvas.height);
+            ctx.restore(); // Maskeyi kaldır
         }
     };
 
-    // --- Unified Pointer Event Handlers (iOS Safari & Android Chrome & Desktop Fix) ---
+    // --- Unified Pointer Event Handlers ---
     const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
         setIsDrawing(true);
         if (canvasRef.current) {
@@ -126,7 +136,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         if (canvasRef.current) {
             try {
                 canvasRef.current.releasePointerCapture(e.pointerId);
-            } catch {
+            } catch (err) {
                 // Ignore capture release errors
             }
         }
@@ -160,8 +170,13 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             <div className="flex-1 w-full flex items-center justify-center overflow-hidden relative p-4">
                 <canvas
                     ref={canvasRef}
-                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 max-w-full max-h-[70vh] object-contain"
-                    style={{ touchAction: 'none' }}
+                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 max-w-full max-h-[70vh] object-contain select-none cursor-crosshair"
+                    style={{ 
+                        touchAction: 'none', 
+                        WebkitTouchCallout: 'none', 
+                        WebkitUserSelect: 'none',
+                        userSelect: 'none'
+                    }}
                     onPointerDown={handlePointerDown}
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
