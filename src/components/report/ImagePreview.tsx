@@ -99,7 +99,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             <div className="flex-1 w-full flex items-center justify-center overflow-hidden relative">
                 <canvas
                     ref={canvasRef}
-                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700"
+                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 touch-none"
                     onMouseDown={(e) => {
                         handleBlur(e);
                     }}
