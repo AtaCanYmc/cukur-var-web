@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useUploadStore } from '../../store/useUploadStore';
 import { Eraser, Check, RotateCcw } from 'lucide-react';
 import toast from "react-hot-toast";
@@ -11,8 +11,10 @@ interface IProps {
 export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
     const image = useUploadStore(state => state.image);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [isDrawing, setIsDrawing] = useState(false);
 
     useEffect(() => {
+        const objectUrl: string | null = null;
         if (image) {
             const img = new Image();
             img.src = image;
@@ -20,60 +22,118 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
                 // eslint-disable-next-line react-hooks/immutability
                 drawImage(img);
             };
-            // Memory leak önlemi: Component unmount olduğunda objeyi temizle
+            
+            // Memory Management: Component unmount olduğunda objeyi ve referansları temizle
             return () => {
                 img.onload = null;
                 img.src = '';
+                if (objectUrl) URL.revokeObjectURL(objectUrl);
             };
         }
     }, [image]);
 
+    // Native TouchMove for preventing scroll (bypasses React passive event warnings)
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const preventScroll = (e: TouchEvent) => {
+            if (e.cancelable) {
+                e.preventDefault();
+            }
+        };
+
+        if (canvas) {
+            canvas.addEventListener('touchmove', preventScroll, { passive: false });
+        }
+        return () => {
+            if (canvas) {
+                canvas.removeEventListener('touchmove', preventScroll);
+            }
+        };
+    }, []);
+
     const drawImage = (img: HTMLImageElement) => {
         const canvas = canvasRef.current;
-        if (canvas) {
-            // Canvas boyutunu ekrana göre ayarla ama aspect ratio koru
-            const containerWidth = window.innerWidth;
-            const containerHeight = window.innerHeight * 0.7; // 70vh
+        if (!canvas) return;
 
-            const scale = Math.min(containerWidth / img.width, containerHeight / img.height);
+        // RAM Dostu Görsel Ölçeklendirme (Downscale)
+        const MAX_DIMENSION = 1200;
+        let drawWidth = img.width;
+        let drawHeight = img.height;
 
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
+        if (drawWidth > MAX_DIMENSION || drawHeight > MAX_DIMENSION) {
+            const ratio = Math.min(MAX_DIMENSION / drawWidth, MAX_DIMENSION / drawHeight);
+            drawWidth = Math.floor(drawWidth * ratio);
+            drawHeight = Math.floor(drawHeight * ratio);
+        }
 
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            }
+        // Canvas asıl çözünürlüğü (arka plan pikselleri)
+        canvas.width = drawWidth;
+        canvas.height = drawHeight;
+
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.drawImage(img, 0, 0, drawWidth, drawHeight);
         }
     };
 
-    const handleBlur = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const performBlur = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
         const rect = canvas.getBoundingClientRect();
-        let x, y;
+        let clientX, clientY;
 
         if ('touches' in e) {
-            x = e.touches[0].clientX - rect.left;
-            y = e.touches[0].clientY - rect.top;
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
         } else {
-            x = (e as React.MouseEvent).clientX - rect.left;
-            y = (e as React.MouseEvent).clientY - rect.top;
+            clientX = (e as React.MouseEvent).clientX;
+            clientY = (e as React.MouseEvent).clientY;
         }
+
+        // Mobil Dokunmatik Optimizasyonu: CSS boyutlarından gerçek çözünürlüğe oranlama (Scale Mapping)
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        const x = (clientX - rect.left) * scaleX;
+        const y = (clientY - rect.top) * scaleY;
 
         const ctx = canvas.getContext('2d');
         if (ctx) {
-            const size = 40; // Blur kalem boyutu
+            // Fırça boyutunu canvas çözünürlüğüne göre dinamik ayarla (%5'i kadar)
+            const size = Math.max(40, canvas.width * 0.05); 
 
-            ctx.filter = 'blur(10px)';
-            ctx.drawImage(canvas, x - size / 2, y - size / 2, size, size, x - size / 2, y - size / 2, size, size);
+            ctx.filter = 'blur(15px)';
+            ctx.drawImage(
+                canvas, 
+                Math.max(0, x - size / 2), 
+                Math.max(0, y - size / 2), 
+                size, size, 
+                x - size / 2, y - size / 2, 
+                size, size
+            );
             ctx.filter = 'none'; // Reset filter
         }
     };
 
+    // --- Mouse & Touch Event Handlers ---
+    const handleStart = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+        setIsDrawing(true);
+        performBlur(e);
+    };
+
+    const handleMove = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+        if (!isDrawing) return;
+        performBlur(e);
+    };
+
+    const handleEnd = () => {
+        setIsDrawing(false);
+    };
+
     const handleConfirm = () => {
         if (canvasRef.current) {
+            // %80 Kalite ile JPEG çıktısı
             const imageSrc = canvasRef.current.toDataURL('image/jpeg', 0.8);
 
             toast.success(
@@ -96,20 +156,23 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
 
     return (
         <div className="flex flex-col items-center h-full w-full bg-slate-50 dark:bg-slate-900 pt-4">
-            <div className="flex-1 w-full flex items-center justify-center overflow-hidden relative">
+            <div className="flex-1 w-full flex items-center justify-center overflow-hidden relative p-4">
                 <canvas
                     ref={canvasRef}
-                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 touch-none"
-                    onMouseDown={(e) => {
-                        handleBlur(e);
-                    }}
-                    onTouchStart={handleBlur}
-                    onTouchMove={handleBlur} // Sürükleyerek blur
+                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 touch-none max-w-full max-h-[70vh] object-contain"
+                    onMouseDown={handleStart}
+                    onMouseMove={handleMove}
+                    onMouseUp={handleEnd}
+                    onMouseLeave={handleEnd}
+                    onTouchStart={handleStart}
+                    onTouchMove={handleMove}
+                    onTouchEnd={handleEnd}
+                    onTouchCancel={handleEnd}
                 />
 
-                <div className="absolute top-4 bg-black/50 text-white px-4 py-2 rounded-full text-xs font-bold pointer-events-none backdrop-blur-sm">
+                <div className="absolute top-6 bg-black/50 text-white px-4 py-2 rounded-full text-xs font-bold pointer-events-none backdrop-blur-sm">
                     <Eraser size={14} className="inline mr-2" />
-                    Gizlemek istediğiniz yere dokunun
+                    Gizlemek istediğiniz yere dokunun veya sürükleyin
                 </div>
             </div>
 
