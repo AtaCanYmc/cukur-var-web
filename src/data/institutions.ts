@@ -13,17 +13,75 @@ export const INITIAL_INSTITUTIONS: Institution[] = [
         selected: true
     },
     {
-        id: 'cimer',
-        name: 'CİMER (Cumhurbaşkanlığı İletişim Merkezi)',
-        email: 'cimer@iletisim.gov.tr', // This might not be a direct email, usually a form, but for mailto we need an email. Let's use a placeholder or remove if not applicable. 
-        // Actually CİMER doesn't accept direct emails usually. Let's stick to local municipalities.
-        // Let's replace with a generic district one for now or just keep İzmir BB.
+        id: 'emniyet',
+        name: 'İzmir Emniyet Müdürlüğü (Trafik)',
+        email: 'izmiremniyet@egm.gov.tr',
         selected: true
     },
     {
-        id: 'ilce_bel',
-        name: 'İlçe Belediyesi (Konum Bazlı)',
-        email: 'info@ilce.bel.tr', // Placeholder
-        selected: true
+        id: 'karayollari',
+        name: 'Karayolları 2. Bölge Müdürlüğü',
+        email: 'bol02@kgm.gov.tr',
+        selected: false
+    },
+    {
+        id: 'konak',
+        name: 'Konak Belediyesi',
+        email: 'iletisim@konak.bel.tr',
+        selected: false
+    },
+    {
+        id: 'bornova',
+        name: 'Bornova Belediyesi',
+        email: 'iletisim@bornova.bel.tr',
+        selected: false
+    },
+    {
+        id: 'buca',
+        name: 'Buca Belediyesi',
+        email: 'iletisim@buca.bel.tr',
+        selected: false
+    },
+    {
+        id: 'karsiyaka',
+        name: 'Karşıyaka Belediyesi',
+        email: 'iletisim@karsiyaka.bel.tr',
+        selected: false
+    },
+    {
+        id: 'cigli',
+        name: 'Çiğli Belediyesi',
+        email: 'iletisim@cigli.bel.tr',
+        selected: false
+    },
+    {
+        id: 'gaziemir',
+        name: 'Gaziemir Belediyesi',
+        email: 'iletisim@gaziemir.bel.tr',
+        selected: false
+    },
+    {
+        id: 'balcova',
+        name: 'Balçova Belediyesi',
+        email: 'iletisim@balcova.bel.tr',
+        selected: false
+    },
+    {
+        id: 'narlidere',
+        name: 'Narlıdere Belediyesi',
+        email: 'iletisim@narlidere.bel.tr',
+        selected: false
+    },
+    {
+        id: 'karabaglar',
+        name: 'Karabağlar Belediyesi',
+        email: 'iletisim@karabaglar.bel.tr',
+        selected: false
+    },
+    {
+        id: 'bayrakli',
+        name: 'Bayraklı Belediyesi',
+        email: 'iletisim@bayrakli.bel.tr',
+        selected: false
     }
 ];

@@ -19,6 +19,7 @@ interface NominatimResponse {
 
 export const useNominatim = (lat?: number, lng?: number) => {
     const [address, setAddress] = useState<string>('');
+    const [rawAddress, setRawAddress] = useState<NominatimResponse['address'] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -53,19 +54,22 @@ export const useNominatim = (lat?: number, lng?: number) => {
 
                 if (data.display_name) {
                     setAddress(data.display_name);
+                    setRawAddress(data.address || null);
                 } else {
                     setAddress('Adres bulunamadı');
+                    setRawAddress(null);
                 }
             } catch (err: any) {
                 setError(err.message || 'Bir hata oluştu');
                 setAddress('');
+                setRawAddress(null);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchAddress();
+        fetchAddress().then(r => r);
     }, [lat, lng]);
 
-    return { address, loading, error };
+    return { address, rawAddress, loading, error };
 };

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useUploadStore} from '../../store/useUploadStore';
 import {INITIAL_INSTITUTIONS, type Institution} from '../../data/institutions';
 import {Check, ChevronRight, Mail, MapPin} from 'lucide-react';
@@ -15,7 +15,31 @@ interface IProps {
 export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) => {
     const { category, description, location } = useUploadStore();
     const [institutions, setInstitutions] = useState<Institution[]>(INITIAL_INSTITUTIONS);
-    const { address, loading: addressLoading } = useNominatim(location?.lat, location?.lng);
+    const { address, rawAddress, loading: addressLoading } = useNominatim(location?.lat, location?.lng);
+
+    useEffect(() => {
+        if (!rawAddress) return;
+
+        const districtName = (rawAddress.country || rawAddress.town || rawAddress.suburb || rawAddress.city_district || '').toLocaleLowerCase('tr-TR');
+        
+        if (districtName) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setInstitutions(prev => prev.map(inst => {
+                if (inst.id === 'izmir_bb') return { ...inst, selected: true };
+                
+                const instNameNormalized = inst.name.toLocaleLowerCase('tr-TR');
+                // Normalize terms to effectively match
+                const districtWords = districtName.split(/\s+/);
+                const isMatch = districtWords.some(word => word.length > 3 && instNameNormalized.includes(word)) || instNameNormalized.includes(districtName);
+
+                if (isMatch || inst.selected) {
+                    return { ...inst, selected: true };
+                }
+                
+                return { ...inst, selected: false };
+            }));
+        }
+    }, [rawAddress]);
 
     const toggleInstitution = (id: string) => {
         setInstitutions(prev => prev.map(inst =>
@@ -70,23 +94,23 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Kurum Seçimi</h2>
                     <p className="text-sm text-slate-500 mb-4">Raporun gönderileceği kurumları seçin.</p>
 
-                    <div className="space-y-3">
+                    <div className="flex overflow-x-auto gap-3 pb-4 -ml-2 mr-2 px-6 snap-x hide-scrollbar">
                         {institutions.map(inst => (
                             <div
                                 key={inst.id}
                                 onClick={() => toggleInstitution(inst.id)}
-                                className={`p-4 rounded-xl border-2 flex items-center justify-between cursor-pointer transition-all ${inst.selected
+                                className={`shrink-0 w-[200px] p-3 rounded-xl border-2 flex flex-col gap-2 cursor-pointer transition-all snap-start ${inst.selected
                                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
                                     : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'
                                     }`}
                             >
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-5 h-5 rounded flex items-center justify-center border ${inst.selected ? 'bg-orange-500 border-orange-500 text-white' : 'border-slate-300'
-                                        }`}>
+                                <div className="flex items-start justify-between gap-2">
+                                    <span className="font-bold text-sm text-slate-700 dark:text-slate-200 line-clamp-2 leading-tight">{inst.name}</span>
+                                    <div className={`shrink-0 w-5 h-5 rounded flex items-center justify-center border ${inst.selected ? 'bg-orange-500 border-orange-500 text-white' : 'border-slate-300'}`}>
                                         {inst.selected && <Check size={14} strokeWidth={3} />}
                                     </div>
-                                    <span className="font-bold text-slate-700 dark:text-slate-200">{inst.name}</span>
                                 </div>
+                                <div className="text-[10px] text-slate-400 truncate">{inst.email}</div>
                             </div>
                         ))}
                     </div>
