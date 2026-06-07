@@ -114,7 +114,7 @@ export const ReportPage: React.FC = () => {
                                 </svg>
                             </div>
                             <h2 className="text-white font-black text-3xl uppercase tracking-tighter mb-2">
-                                Rapor Gönderildi
+                                Mailinizi gönderebilmeniz için yönlendirme yapıldı.
                             </h2>
                             <p className="text-slate-400 text-lg font-medium">
                                 Katkınız için teşekkürler.
