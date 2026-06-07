@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Circle, useMap, useMapEvents } from 'react-leaflet';
-import { useUploadStore } from '../../store/useUploadStore';
-import { Check, X, AlertTriangle } from 'lucide-react';
+import React, {useEffect, useState} from 'react';
+import {MapContainer, TileLayer, Marker, Circle, useMap, useMapEvents} from 'react-leaflet';
+import {useUploadStore} from '../../store/useUploadStore';
+import {Check, X, AlertTriangle} from 'lucide-react';
 import L from 'leaflet';
-import { useTheme } from '../../context/ThemeContext';
+import {useTheme} from '../../context/ThemeContext';
 
 // Fix Leaflet marker icon
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import toast from 'react-hot-toast';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -36,23 +35,18 @@ const LocationMarker = () => {
         click(e) {
             // Check distance
             if (userLocation) {
-                const dist = e.latlng.distanceTo(userLocation);
-                if (dist <= MAX_DISTANCE_METERS) {
-                    setLocation(e.latlng.lat, e.latlng.lng);
-                } else {
-                    toast.error("Şu anki konumunuzdan en fazla 250 metre uzağı seçebilirsiniz.");
-                }
+                setLocation(e.latlng.lat, e.latlng.lng);
             } else {
                 setLocation(e.latlng.lat, e.latlng.lng);
             }
         },
     });
 
-    return location ? <Marker position={location} /> : null;
+    return location ? <Marker position={location}/> : null;
 };
 
 // Helper to center map on user location
-const RecenterMap = ({ lat, lng }: { lat: number; lng: number }) => {
+const RecenterMap = ({lat, lng}: { lat: number; lng: number }) => {
     const map = useMap();
     useEffect(() => {
         map.flyTo([lat, lng], 15);
@@ -60,14 +54,14 @@ const RecenterMap = ({ lat, lng }: { lat: number; lng: number }) => {
     return null;
 };
 
-const IZMIR_CENTER = { lat: 38.4237, lng: 27.1428 };
+const IZMIR_CENTER = {lat: 38.4237, lng: 27.1428};
 
-export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
+export const LocationPicker: React.FC<IProps> = ({onConfirm, onCancel}) => {
     const location = useUploadStore(state => state.location);
     const userLocation = useUploadStore(state => state.userLocation);
     const setUserLocation = useUploadStore(state => state.setUserLocation);
     const setLocation = useUploadStore(state => state.setLocation);
-    const { isDark } = useTheme();
+    const {isDark} = useTheme();
     const [loadingLocation, setLoadingLocation] = useState(true);
     const [geoError, setGeoError] = useState(false);
 
@@ -79,20 +73,20 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const { latitude, longitude } = position.coords;
+                    const {latitude, longitude} = position.coords;
                     setUserLocation(latitude, longitude);
                     // If no location set yet, set to current
                     const currentLocation = useUploadStore.getState().location;
                     if (!currentLocation) {
                         setLocation(latitude, longitude);
                     }
-                     
+
                     setLoadingLocation(false);
                     setGeoError(false);
                 },
                 (error) => {
                     console.error("Konum alınamadı", error);
-                     
+
                     setLoadingLocation(false);
                     setGeoError(true);
                 }
@@ -125,7 +119,7 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
                         attributionControl={false}
                         key={isDark ? 'dark' : 'light'}
                     >
-                        <TileLayer url={mapUrl} />
+                        <TileLayer url={mapUrl}/>
 
                         {userLocation && (
                             <>
@@ -133,39 +127,44 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
                                 <Circle
                                     center={userLocation}
                                     radius={MAX_DISTANCE_METERS}
-                                    pathOptions={{ color: 'orange', fillColor: 'orange', fillOpacity: 0.1 }}
+                                    pathOptions={{color: 'orange', fillColor: 'orange', fillOpacity: 0.1}}
                                 />
 
                                 {/* Current Location Marker (User) */}
                                 <Circle
                                     center={userLocation}
                                     radius={5}
-                                    pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 1 }}
+                                    pathOptions={{color: 'blue', fillColor: 'blue', fillOpacity: 1}}
                                 />
                             </>
                         )}
 
-                        <LocationMarker />
-                        {userLocation && <RecenterMap lat={userLocation.lat} lng={userLocation.lng} />}
+                        <LocationMarker/>
+                        {userLocation && <RecenterMap lat={userLocation.lat} lng={userLocation.lng}/>}
                     </MapContainer>
                 )}
 
                 {/* Overlay Info */}
                 <div className="absolute top-4 left-4 right-4 z-[1000] pointer-events-none flex flex-col gap-2">
                     {geoError && (
-                        <div className="bg-amber-50 dark:bg-amber-900/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-amber-200 dark:border-amber-800/50 flex gap-3 text-left">
-                            <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={20} />
+                        <div
+                            className="bg-amber-50 dark:bg-amber-900/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-amber-200 dark:border-amber-800/50 flex gap-3 text-left">
+                            <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={20}/>
                             <p className="text-[11px] font-medium text-amber-800 dark:text-amber-200 leading-relaxed">
-                                Konum izni verilmediği için harita otomatik odaklanamadı. İhbar oluşturmak için haritaya manuel tıklayarak çukurun yerini işaretleyebilir veya tarayıcı ayarlarından izni tekrar açabilirsiniz.
+                                Konum izni verilmediği için harita otomatik odaklanamadı. İhbar oluşturmak için haritaya
+                                manuel tıklayarak çukurun yerini işaretleyebilir veya tarayıcı ayarlarından izni tekrar
+                                açabilirsiniz.
                             </p>
                         </div>
                     )}
 
                     {!geoError && !loadingLocation && (
-                        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 text-center">
+                        <div
+                            className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 text-center">
                             <p className="text-sm font-bold text-slate-800 dark:text-white">Konumu İşaretleyin</p>
                             <p className="text-xs text-slate-500 mt-1">
-                                Şu anki konumunuzdan en fazla <span className="text-orange-600 font-bold">250m</span> uzağı seçebilirsiniz.
+                                Şu anki konumunuzdan en fazla <span
+                                className="text-orange-600 font-bold">250m</span> uzağı seçebilirsiniz.
                             </p>
                         </div>
                     )}
@@ -180,17 +179,17 @@ export const LocationPicker: React.FC<IProps> = ({ onConfirm, onCancel }) => {
                     className={`w-full py-4 rounded-2xl font-black text-white text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 ${location
                         ? 'bg-orange-600 hover:bg-orange-700 shadow-orange-500/30'
                         : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
-                        }`}
+                    }`}
                 >
                     Konumu Onayla
-                    <Check size={20} />
+                    <Check size={20}/>
                 </button>
                 <button
                     onClick={onCancel}
                     className="w-full py-4 rounded-2xl font-black text-white text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 bg-slate-300 dark:bg-slate-700 cursor-pointer mt-3"
                 >
                     İptal
-                    <X size={20} />
+                    <X size={20}/>
                 </button>
             </div>
         </div>
