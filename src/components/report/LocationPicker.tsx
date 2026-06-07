@@ -164,7 +164,7 @@ export const LocationPicker: React.FC<IProps> = ({onConfirm, onCancel}) => {
                             <p className="text-sm font-bold text-slate-800 dark:text-white">Konumu İşaretleyin</p>
                             <p className="text-xs text-slate-500 mt-1">
                                 Şu anki konumunuzdan en fazla <span
-                                className="text-orange-600 font-bold">250m</span> uzağı seçebilirsiniz.
+                                className="text-orange-600 font-bold">250m</span> uzağı seçmenizi öneriyoruz.
                             </p>
                         </div>
                     )}
