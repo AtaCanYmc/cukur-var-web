@@ -4,6 +4,7 @@ import {MainMap} from "../components/map/MainMap.tsx";
 import type {IPothole} from "../components/map/types/Pothole.ts";
 import {BottomNav} from "../components/layout/BottomNav.tsx";
 import {PageWrapper} from "../components/layout/PageWrapper.tsx";
+import {PWAInstallBanner} from "../components/layout/PWAInstallBanner.tsx";
 
 const HomePage = () => {
     const {startLoading, stopLoading} = useUIStore();
@@ -21,6 +22,7 @@ const HomePage = () => {
 
     return (
         <PageWrapper showHeader showBottomNav>
+            <PWAInstallBanner />
             <MainMap
                 potholes={[
                     {
