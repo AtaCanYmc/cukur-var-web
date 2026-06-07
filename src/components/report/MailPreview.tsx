@@ -93,7 +93,7 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">E-Posta Önizleme</h2>
                     <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                         <div className="border-b border-slate-100 dark:border-slate-700 pb-3 mb-3">
-                            <div className="text-xs text-slate-400 font-bold uppercase mb-1">Kime</div>
+                            <div className="text-xs text-slate-400 font-bold uppercase mb-1">Alıcı</div>
                             <div className="text-sm text-slate-800 dark:text-slate-200 break-words">{getSelectedEmails() || '(Seçim yok)'}</div>
                         </div>
                         <div className="border-b border-slate-100 dark:border-slate-700 pb-3 mb-3">
