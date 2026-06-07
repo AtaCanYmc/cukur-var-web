@@ -85,7 +85,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             document.body.removeChild(link);
             setTimeout(() => {
                 onConfirm(imageSrc);
-            }, 1500);
+            }, 500);
         }
     };
 
