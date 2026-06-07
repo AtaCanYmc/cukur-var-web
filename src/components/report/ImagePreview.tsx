@@ -160,13 +160,8 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             <div className="flex-1 w-full flex items-center justify-center overflow-hidden relative p-4">
                 <canvas
                     ref={canvasRef}
-                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 max-w-full max-h-[70vh] object-contain select-none"
-                    style={{ 
-                        touchAction: 'none', 
-                        WebkitTouchCallout: 'none', 
-                        WebkitUserSelect: 'none',
-                        userSelect: 'none'
-                    }}
+                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 max-w-full max-h-[70vh] object-contain"
+                    style={{ touchAction: 'none' }}
                     onPointerDown={handlePointerDown}
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
