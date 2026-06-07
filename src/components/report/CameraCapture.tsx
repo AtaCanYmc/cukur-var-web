@@ -1,12 +1,12 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { RefreshCw, Paperclip, X, Home } from 'lucide-react';
+import React, {useRef, useEffect, useState} from 'react';
+import {RefreshCw, Paperclip, X, Home} from 'lucide-react';
 
 interface IProps {
     onCapture: (imageSrc: string) => void;
     onCancel?: () => void;
 }
 
-export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
+export const CameraCapture: React.FC<IProps> = ({onCapture, onCancel}) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [error, setError] = useState<string | null>(null);
@@ -14,7 +14,7 @@ export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
     const startCamera = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'environment' } // Arka kamera öncelikli
+                video: {facingMode: 'environment'} // Arka kamera öncelikli
             });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
@@ -51,7 +51,7 @@ export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
             if (context) {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 const imageSrc = canvas.toDataURL('image/jpeg', 0.8);
-                
+
                 // Fotoğrafı galeriye kaydetmek için indirme tetikle
                 const link = document.createElement('a');
                 link.href = imageSrc;
@@ -88,19 +88,21 @@ export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
                 muted
                 className="absolute inset-0 w-full h-full object-cover"
             />
-            <canvas ref={canvasRef} className="hidden" />
+            <canvas ref={canvasRef} className="hidden"/>
 
             {/* Hata Durumu */}
             {error && (
                 <div className="z-20 text-white text-center p-6 bg-slate-900/80 rounded-xl max-w-xs">
                     <p className="mb-4">{error}</p>
-                    <label className="bg-orange-600 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center gap-2">
-                        <Paperclip size={18} />
+                    <label
+                        className="bg-orange-600 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center gap-2">
+                        <Paperclip size={18}/>
                         Galeriden Seç
-                        <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                        <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload}/>
                     </label>
-                    <label className="bg-orange-600 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center gap-2 mt-2">
-                        <Home size={18} />
+                    <label
+                        className="bg-orange-600 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center gap-2 mt-2">
+                        <Home size={18}/>
                         <button onClick={onCancel}>Ana Sayfaya Dön</button>
                     </label>
                 </div>
@@ -115,14 +117,15 @@ export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
                         onClick={() => window.location.href = '/'} // Basit yönlendirme veya onCancel prop'u
                         className="absolute top-6 right-6 z-30 w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors"
                     >
-                        <X size={24} />
+                        <X size={24}/>
                     </button>
 
                     <div className="absolute bottom-10 w-full flex items-center justify-center gap-8 z-20">
                         {/* Dosya Yükleme (Alternatif) */}
-                        <label className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white cursor-pointer hover:bg-white/30 transition-all">
-                            <Paperclip size={24} />
-                            <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                        <label
+                            className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white cursor-pointer hover:bg-white/30 transition-all">
+                            <Paperclip size={24}/>
+                            <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload}/>
                         </label>
 
                         {/* Çekim Butonu */}
@@ -130,15 +133,18 @@ export const CameraCapture: React.FC<IProps> = ({ onCapture, onCancel }) => {
                             onClick={handleCapture}
                             className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center bg-transparent active:scale-95 transition-transform"
                         >
-                            <div className="w-16 h-16 bg-white rounded-full" />
+                            <div className="w-16 h-16 bg-white rounded-full"/>
                         </button>
 
                         {/* Kamerayı Yenile/Çevir (Mock - aslında sadece yeniden başlatır) */}
                         <button
-                            onClick={() => { stopCamera(); startCamera(); }}
+                            onClick={() => {
+                                stopCamera();
+                                startCamera();
+                            }}
                             className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition-all"
                         >
-                            <RefreshCw size={24} />
+                            <RefreshCw size={24}/>
                         </button>
                     </div>
                 </>

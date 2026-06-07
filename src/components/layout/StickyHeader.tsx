@@ -1,6 +1,6 @@
-import { StatusBadge } from "../button/badge/StatusBadgeü.tsx";
-import { useTheme } from "../../context/ThemeContext";
-import { Sun, Moon } from "lucide-react";
+import {StatusBadge} from "../button/badge/StatusBadgeü.tsx";
+import {useTheme} from "../../context/ThemeContext";
+import {Sun, Moon} from "lucide-react";
 
 interface IProps {
     activePothole?: number;
@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const StickyHeader = (props: IProps) => {
-    const { isDark, setTheme } = useTheme();
+    const {isDark, setTheme} = useTheme();
 
     const toggleTheme = () => {
         setTheme(isDark ? 'light' : 'dark');
@@ -23,11 +23,12 @@ const StickyHeader = (props: IProps) => {
             <div
                 className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200 dark:border-slate-700/50 p-3 px-4 rounded-[20px] shadow-2xl pointer-events-auto transition-all hover:scale-105 flex items-center justify-between gap-4">
                 <div onClick={toggleTheme} className="cursor-pointer">
-                    {isDark ? <Sun size={18} className="text-orange-400" /> : <Moon size={18} className="text-slate-600" />}
+                    {isDark ? <Sun size={18} className="text-orange-400"/> :
+                        <Moon size={18} className="text-slate-600"/>}
                 </div>
                 <div className="flex items-center gap-2">
                     {/* Küçük bir Orange Dot - "Live" Efekti */}
-                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"/>
                     <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">
                         ÇUKUR<span className="text-orange-500">VAR</span>
                     </h1>

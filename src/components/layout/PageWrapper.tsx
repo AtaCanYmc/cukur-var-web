@@ -1,7 +1,7 @@
-import { motion } from 'framer-motion';
+import {motion} from 'framer-motion';
 import StickyHeader from "./StickyHeader.tsx";
 import React from "react";
-import { BottomNav } from './BottomNav.tsx';
+import {BottomNav} from './BottomNav.tsx';
 import StickyHomeButton from './StickyBackHomeButton.tsx';
 
 interface IProps {
@@ -15,17 +15,17 @@ interface IProps {
 export const PageWrapper: React.FC<IProps> = (props: IProps) => {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            exit={{opacity: 0, y: -20}}
+            transition={{duration: 0.3}}
         >
-            {props.showHeader && <StickyHeader showBadges={props.showBadges ?? false} />}
+            {props.showHeader && <StickyHeader showBadges={props.showBadges ?? false}/>}
             {props.children}
-            {props.showBottomNav && <BottomNav />}
+            {props.showBottomNav && <BottomNav/>}
             {props.showHomeButton && <StickyHomeButton onClick={() => {
                 window.location.href = "/";
-            }} />}
+            }}/>}
         </motion.div>
     );
 };

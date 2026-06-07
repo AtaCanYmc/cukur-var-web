@@ -1,12 +1,12 @@
-import { useEffect } from "react";
-import { useUIStore } from "../store/useUIStore.ts";
-import { MainMap } from "../components/map/MainMap.tsx";
-import type { IPothole } from "../components/map/types/Pothole.ts";
-import { BottomNav } from "../components/layout/BottomNav.tsx";
-import { PageWrapper } from "../components/layout/PageWrapper.tsx";
+import {useEffect} from "react";
+import {useUIStore} from "../store/useUIStore.ts";
+import {MainMap} from "../components/map/MainMap.tsx";
+import type {IPothole} from "../components/map/types/Pothole.ts";
+import {BottomNav} from "../components/layout/BottomNav.tsx";
+import {PageWrapper} from "../components/layout/PageWrapper.tsx";
 
 const HomePage = () => {
-    const { startLoading, stopLoading } = useUIStore();
+    const {startLoading, stopLoading} = useUIStore();
 
     useEffect(() => {
         // Veri çekme simülasyonu
@@ -37,7 +37,7 @@ const HomePage = () => {
                 }}
             />
 
-            <BottomNav />
+            <BottomNav/>
         </PageWrapper>
     );
 };

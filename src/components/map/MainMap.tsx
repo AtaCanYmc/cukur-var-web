@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, ZoomControl, useMapEvents } from 'react-leaflet';
+import React, {useState, useEffect} from 'react';
+import {MapContainer, TileLayer, Marker, ZoomControl, useMapEvents} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { createCustomPotholeIcon, createUserLocationIcon } from "./types/PotholeMarker.ts";
-import type { IPothole } from "./types/Pothole.ts";
-import { useTheme } from "../../context/ThemeContext";
-import { useDevice } from '../../hooks/useDevice.tsx';
+import {createCustomPotholeIcon, createUserLocationIcon} from "./types/PotholeMarker.ts";
+import type {IPothole} from "./types/Pothole.ts";
+import {useTheme} from "../../context/ThemeContext";
+import {useDevice} from '../../hooks/useDevice.tsx';
 
 interface IMapProps {
     potholes: IPothole[];
@@ -30,13 +30,13 @@ const LocationMarker = () => {
     }, [map]);
 
     return position === null ? null : (
-        <Marker position={position} icon={createUserLocationIcon()} />
+        <Marker position={position} icon={createUserLocationIcon()}/>
     );
 };
 
-export const MainMap: React.FC<IMapProps> = ({ potholes, onMarkerClick }) => {
-    const { isDark } = useTheme();
-    const { isMobile } = useDevice();
+export const MainMap: React.FC<IMapProps> = ({potholes, onMarkerClick}) => {
+    const {isDark} = useTheme();
+    const {isMobile} = useDevice();
 
     // Harita stilini (Dark/Light Mode) CartoDB üzerinden çekiyoruz
     const mapUrl = isDark
@@ -56,7 +56,7 @@ export const MainMap: React.FC<IMapProps> = ({ potholes, onMarkerClick }) => {
                 attributionControl={false}
                 key={isDark ? 'dark' : 'light'}
             >
-                <TileLayer url={mapUrl} />
+                <TileLayer url={mapUrl}/>
 
                 {potholes.map((pothole) => (
                     <Marker
@@ -70,15 +70,15 @@ export const MainMap: React.FC<IMapProps> = ({ potholes, onMarkerClick }) => {
                 ))}
 
                 {/* Kullanıcının Konumu */}
-                <LocationMarker />
+                <LocationMarker/>
 
                 {/* Zoom kontrolünü sağ alta, Navigasyonun üzerine alıyoruz */}
-                {!isMobile && <ZoomControl position="bottomright" />}
+                {!isMobile && <ZoomControl position="bottomright"/>}
             </MapContainer>
 
             {/* Harita Üzerinde "Overlay" Gradient - Navigasyonun arkasını karartmak için */}
             <div
-                className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-slate-900 to-transparent pointer-events-none z-10" />
+                className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-slate-900 to-transparent pointer-events-none z-10"/>
         </div>
     );
 };
