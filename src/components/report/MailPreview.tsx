@@ -43,15 +43,22 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
             return;
         }
 
-        // 1. Clipboard Automation
+        // 1. Clipboard Automation (Safari/Mac Fix)
+        // Safari requires navigator.clipboard.write to be called synchronously within the user gesture.
+        // We can pass a Promise directly to the ClipboardItem to delay the actual data resolution.
         if (images.length > 0) {
             toast.loading("Fotoğraf panoya kopyalanıyor...", { id: 'clipboard' });
             try {
-                const response = await fetch(images[0]);
-                const blob = await response.blob();
+                const dataUrl = images[0];
+                const mimeMatch = dataUrl.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
+                const mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
+
+                // Blob sözü (Promise)
+                const blobPromise = fetch(dataUrl).then(res => res.blob());
+
                 await navigator.clipboard.write([
                     new ClipboardItem({
-                        [blob.type]: blob
+                        [mimeType]: blobPromise
                     })
                 ]);
                 toast.success("Fotoğraf panoya kopyalandı!", { id: 'clipboard' });
