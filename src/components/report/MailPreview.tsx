@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useUploadStore } from '../../store/useUploadStore';
-import { INITIAL_INSTITUTIONS, type Institution } from '../../data/institutions';
-import { Check, Mail, ChevronRight } from 'lucide-react';
+import React, {useState} from 'react';
+import {useUploadStore} from '../../store/useUploadStore';
+import {INITIAL_INSTITUTIONS, type Institution} from '../../data/institutions';
+import {Check, ChevronRight, Mail} from 'lucide-react';
 import toast from 'react-hot-toast';
-import { MAIL_TEMPLATES } from '../../constants/MailTemplates';
+import {MAIL_TEMPLATES} from '../../constants/MailTemplates';
 
 interface IProps {
     onConfirm: () => void;
@@ -50,9 +50,7 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
         }
 
         const { subject, body } = generateMailContent();
-        const mailtoLink = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-        window.location.href = mailtoLink;
+        window.location.href = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
         // Proceed to success after a short delay to allow mail client to open
         setTimeout(() => {
@@ -64,7 +62,7 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
 
     return (
         <div className="h-full w-full bg-slate-50 dark:bg-slate-900 flex flex-col">
-            <div className="flex-1 overflow-y-auto px-6 pt-6 pb-24">
+            <div className="flex-1 overflow-y-auto px-6 pt-6 pb-44">
                 <div className="mb-6">
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Kurum Seçimi</h2>
                     <p className="text-sm text-slate-500 mb-4">Raporun gönderileceği kurumları seçin.</p>
@@ -109,6 +107,11 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/*Fotoğrafı maile eklemeyi unutmayın notu*/}
+                <div className="text-sm text-slate-500 italic">
+                    (*) Çektiğiniz fotoğrafı maile eklemeyi unutmayınız. Fotoğraf otomatik olarak cihazınıza indirilecektir.
                 </div>
             </div>
 
