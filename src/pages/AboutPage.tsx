@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageWrapper } from '../components/layout/PageWrapper';
-import { Mail, Github, Heart, EyeOff } from 'lucide-react';
+import { Mail, Github, Heart, EyeOff, AlertTriangle } from 'lucide-react';
 import { useDevice } from '../hooks/useDevice';
 
 export const AboutPage: React.FC = () => {
@@ -49,6 +49,19 @@ export const AboutPage: React.FC = () => {
                         </div>
                         <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed space-y-2">
                             Uygulamanın bir veritabanı veya backend sunucusu bulunmamaktadır. Çektiğiniz fotoğraflar internete yüklenmez, doğrudan cihazınıza indirilir. Konum verileriniz hiçbir sistemde saklanmaz. İhbar metni tarayıcınızda hazırlanır ve doğrudan kendi e-posta adresiniz üzerinden ilgili kurumlara (Belediye, Emniyet, Karayolları) iletilir.
+                        </p>
+                    </div>
+
+                    {/* Disclaimer / Yasal Uyarı */}
+                    <div className="bg-amber-50/60 dark:bg-amber-900/20 rounded-3xl p-6 mb-6 border border-amber-100 dark:border-amber-700/40">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-amber-500 text-white rounded-xl">
+                                <AlertTriangle size={18} />
+                            </div>
+                            <h2 className="text-base font-bold text-slate-900 dark:text-amber-500">Yasal Uyarı & Sorumluluk Reddi</h2>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed space-y-2">
+                            ÇukurVar, resmi bir kamu kurumu, belediye iştiraki veya devlet organı değildir; bağımsız bir açık kaynak sivil inisiyatif projesidir. Uygulama, ihbar süreçlerinin takibini veya sorunların kurumlar tarafından çözülme garantisini taahhüt etmez. Gönderilen e-postaların içeriği ve eklenen görsellerin yasal sorumluluğu tamamen kullanıcının kendisine aittir.
                         </p>
                     </div>
 
