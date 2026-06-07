@@ -15,3 +15,17 @@ export const createCustomPotholeIcon = (status: string) => {
         iconAnchor: [16, 16],
     });
 };
+
+export const createUserLocationIcon = () => {
+    return new L.DivIcon({
+        className: 'user-location-marker',
+        html: `
+      <div class="relative flex items-center justify-center">
+        <div class="absolute w-12 h-12 bg-blue-500/30 rounded-full animate-ping"></div>
+        <div class="relative w-5 h-5 bg-blue-500 border-2 border-white rounded-full shadow-xl"></div>
+      </div>
+    `,
+        iconSize: [48, 48],
+        iconAnchor: [24, 24],
+    });
+};

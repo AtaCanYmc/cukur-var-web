@@ -1,7 +1,7 @@
-import React from 'react';
-import { MapContainer, TileLayer, Marker, ZoomControl } from 'react-leaflet';
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, ZoomControl, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { createCustomPotholeIcon } from "./types/PotholeMarker.ts";
+import { createCustomPotholeIcon, createUserLocationIcon } from "./types/PotholeMarker.ts";
 import type { IPothole } from "./types/Pothole.ts";
 import { useTheme } from "../../context/ThemeContext";
 import { useDevice } from '../../hooks/useDevice.tsx';
@@ -14,6 +14,25 @@ interface IMapProps {
 
 // İzmir Merkez Koordinatları
 const IZMIR_CENTER: [number, number] = [38.4237, 27.1428];
+
+const LocationMarker = () => {
+    const [position, setPosition] = useState<[number, number] | null>(null);
+
+    const map = useMapEvents({
+        locationfound(e) {
+            setPosition([e.latlng.lat, e.latlng.lng]);
+            map.flyTo(e.latlng, 15);
+        },
+    });
+
+    useEffect(() => {
+        map.locate();
+    }, [map]);
+
+    return position === null ? null : (
+        <Marker position={position} icon={createUserLocationIcon()} />
+    );
+};
 
 export const MainMap: React.FC<IMapProps> = ({ potholes, onMarkerClick }) => {
     const { isDark } = useTheme();
@@ -49,6 +68,9 @@ export const MainMap: React.FC<IMapProps> = ({ potholes, onMarkerClick }) => {
                         }}
                     />
                 ))}
+
+                {/* Kullanıcının Konumu */}
+                <LocationMarker />
 
                 {/* Zoom kontrolünü sağ alta, Navigasyonun üzerine alıyoruz */}
                 {!isMobile && <ZoomControl position="bottomright" />}
