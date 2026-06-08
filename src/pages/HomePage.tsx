@@ -44,7 +44,7 @@ const HomePage = () => {
             }
         };
 
-        fetchStaticPotholes();
+        fetchStaticPotholes().then(r => r);
 
         return () => {
             isMounted = false;
