@@ -2,21 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {MapContainer, TileLayer, Marker, Circle, useMap, useMapEvents} from 'react-leaflet';
 import {useUploadStore} from '../../store/useUploadStore';
 import {Check, X, AlertTriangle} from 'lucide-react';
-import L from 'leaflet';
 import {useTheme} from '../../context/ThemeContext';
-
-// Fix Leaflet marker icon
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
-});
+import {createLocationPickerIcon} from '../map/types/PotholeMarker';
 
 interface IProps {
     onConfirm: () => void;
@@ -42,7 +29,7 @@ const LocationMarker = () => {
         },
     });
 
-    return location ? <Marker position={location}/> : null;
+    return location ? <Marker position={location} icon={createLocationPickerIcon()} /> : null;
 };
 
 // Helper to center map on user location
