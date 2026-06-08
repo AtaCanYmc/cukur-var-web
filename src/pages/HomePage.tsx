@@ -5,8 +5,6 @@ import type {IPothole} from "../components/map/types/Pothole.ts";
 import {BottomNav} from "../components/layout/BottomNav.tsx";
 import {PageWrapper} from "../components/layout/PageWrapper.tsx";
 import {PWAInstallBanner} from "../components/layout/PWAInstallBanner.tsx";
-import {supabase} from "../lib/supabase.ts";
-import type {IPotholeRecord} from "../types/potholeReport.ts";
 
 const HomePage = () => {
     const startLoading = useUIStore(state => state.startLoading);
@@ -16,38 +14,29 @@ const HomePage = () => {
     useEffect(() => {
         let isMounted = true;
 
-        const fetchPotholes = async () => {
-            if (!supabase) {
-                // Supabase kurulu değilse simülasyon olarak geç veya doğrudan çık
-                return;
-            }
-
+        const fetchStaticPotholes = async () => {
             try {
-                startLoading('İhbarlar yükleniyor...');
+                startLoading('İhbarlar haritaya işleniyor...');
                 
-                // Supabase'den canlı koordinatları çek (En yeni en üstte)
-                const { data, error } = await supabase
-                    .from('potholes')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+                // 🚀 Jamstack Mimarisi: Veritabanına anlık istek atmak yerine 
+                // GitHub Actions'ın saat başı senkronize ettiği statik dosyayı tüketiyoruz.
+                const response = await fetch('/potholes.json', {
+                    cache: 'no-store' // Tarayıcı agresif cache'ini önlemek için
+                });
 
-                if (error) {
-                    throw error;
+                if (!response.ok) {
+                    throw new Error(`Statik JSON dosyası bulunamadı (Status: ${response.status})`);
                 }
 
-                if (data && isMounted) {
-                    const mappedData: IPothole[] = data.map((item: IPotholeRecord) => ({
-                        id: item.id || crypto.randomUUID(),
-                        lat: item.latitude,
-                        lng: item.longitude, // Supabase'deki longitude -> Haritanın beklediği lng
-                        status: 'active', // Harita marker'ını aktif tut
-                        severity: item.category === 'pothole' ? 'high' : 'low' // Kategoriye göre dinamik tehlike derecesi
-                    }));
-                    
-                    setPotholes(mappedData);
+                const data = await response.json();
+
+                if (isMounted) {
+                    setPotholes(data);
                 }
             } catch (error) {
-                console.error("Harita verileri Supabase'den çekilirken hata oluştu:", error);
+                // 🚨 Fail-Silent (Sessiz Hata)
+                // Henüz cron job çalışmadıysa veya dosya yoksa beyaz ekrana düşmeyi önler
+                console.error("Harita statik verileri çekilirken hata oluştu:", error);
             } finally {
                 if (isMounted) {
                     stopLoading();
@@ -55,7 +44,7 @@ const HomePage = () => {
             }
         };
 
-        fetchPotholes().then(r => r);
+        fetchStaticPotholes();
 
         return () => {
             isMounted = false;

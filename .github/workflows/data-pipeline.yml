@@ -1,0 +1,41 @@
+name: Jamstack Data Pipeline
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Her saat başı
+  workflow_dispatch: # Manuel tetikleme imkanı
+
+jobs:
+  fetch-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch Potholes from Supabase
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: node scripts/fetch-potholes.js
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/potholes.json
+          
+          # Eğer public/potholes.json dosyasında değişiklik varsa commit at
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore: sync live potholes data from supabase [skip ci]"
+            git push
+          else
+            echo "No new data to sync. Exiting smoothly."
+          fi
