@@ -4,6 +4,7 @@ import {Check, ChevronRight, Mail, MapPin, Download, X} from 'lucide-react';
 import toast from 'react-hot-toast';
 import {useMailAutomation} from '../../hooks/useMailAutomation';
 import {buildMailContent} from '../../utils/mailBuilder';
+import {useSupabaseReport} from '../../hooks/useSupabaseReport';
 
 interface IProps {
     onConfirm: () => void;
@@ -19,6 +20,9 @@ export const MailPreview: React.FC<IProps> = ({onConfirm, onCancel, images}) => 
     const description = useUploadStore(state => state.description);
     const location = useUploadStore(state => state.location);
     const resetUpload = useUploadStore(state => state.resetUpload);
+    
+    // Supabase Hook
+    const { savePotholeCoordinates } = useSupabaseReport();
 
     const {
         institutions,
@@ -72,6 +76,18 @@ export const MailPreview: React.FC<IProps> = ({onConfirm, onCancel, images}) => 
     const handleProceedToMail = () => {
         setShowModal(false);
         const emails = getSelectedEmails();
+
+        // 🚨 SİVİL İNİSİYATİF - SESSİZ KAYIT (Fire and Forget)
+        // Kullanıcının mail açılış hızını kesmemek için asenkron bekletme (await) yapmıyoruz.
+        // Hata olsa bile hook kendi içinde yutacak, ana akış etkilenmeyecek.
+        if (location?.lat && location?.lng) {
+            savePotholeCoordinates({
+                category: category || 'other',
+                latitude: location.lat,
+                longitude: location.lng,
+                city: address?.split(',').slice(-2, -1)[0]?.trim() || 'Bilinmiyor' // Kabaca ilçeyi/şehri çeker
+            });
+        }
 
         // Mail istemcisini tetikle
         window.location.href = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
