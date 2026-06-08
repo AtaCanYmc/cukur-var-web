@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useUploadStore } from '../../store/useUploadStore';
-import { Check, ChevronRight, Mail, MapPin, ClipboardCheck, X } from 'lucide-react';
+import React, {useState} from 'react';
+import {useUploadStore} from '../../store/useUploadStore';
+import {Check, ChevronRight, Mail, MapPin, ClipboardCheck, X} from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useMailAutomation } from '../../hooks/useMailAutomation';
-import { buildMailContent } from '../../utils/mailBuilder';
+import {useMailAutomation} from '../../hooks/useMailAutomation';
+import {buildMailContent} from '../../utils/mailBuilder';
 
 interface IProps {
     onConfirm: () => void;
@@ -11,7 +11,7 @@ interface IProps {
     images: string[];
 }
 
-export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) => {
+export const MailPreview: React.FC<IProps> = ({onConfirm, onCancel, images}) => {
     const [showModal, setShowModal] = useState(false);
 
     // Zustand Atomic Selectors
@@ -20,20 +20,20 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
     const location = useUploadStore(state => state.location);
     const resetUpload = useUploadStore(state => state.resetUpload);
 
-    const { 
-        institutions, 
-        toggleInstitution, 
-        getSelectedEmails, 
-        address, 
-        loading: addressLoading 
+    const {
+        institutions,
+        toggleInstitution,
+        getSelectedEmails,
+        address,
+        loading: addressLoading
     } = useMailAutomation(location?.lat, location?.lng);
 
-    const { subject, body } = buildMailContent({ 
-        category, 
-        description, 
-        location, 
-        address, 
-        images 
+    const {subject, body} = buildMailContent({
+        category,
+        description,
+        location,
+        address,
+        images
     });
 
     const handleSendMailClick = async () => {
@@ -43,29 +43,45 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
             return;
         }
 
-        // 1. Clipboard Automation (Safari/Mac Fix)
-        // Safari requires navigator.clipboard.write to be called synchronously within the user gesture.
-        // We can pass a Promise directly to the ClipboardItem to delay the actual data resolution.
+// 1. Clipboard Automation (Cross-Platform Mobile & Safari Fix)
         if (images.length > 0) {
-            toast.loading("Fotoğraf panoya kopyalanıyor...", { id: 'clipboard' });
+            toast.loading("Fotoğraf panoya kopyalanıyor...", {id: 'clipboard'});
             try {
                 const dataUrl = images[0];
                 const mimeMatch = dataUrl.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
                 const mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
 
-                // Blob sözü (Promise)
-                const blobPromise = fetch(dataUrl).then(res => res.blob());
+                // 🚨 MOBİL & SAFARI SINIRLARINI ETKİSİZLEŞTİREN GÜVENLİ AKIŞ:
+                // Bazı mobil tarayıcılar ClipboardItem içinde Promise kabul etmediği için
+                // Base64 verisini fetch yerine doğrudan senkronize ArrayBuffer/Blob dönüşümüne tabi tutuyoruz.
+                const byteString = atob(dataUrl.split(',')[1]);
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
 
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+
+                const cleanBlob = new Blob([ab], {type: mimeType});
+
+                // Tarayıcıya hazır resolve edilmiş temiz blobu veriyoruz.
+                // Bu işlem hem jest süresi (user gesture) içinde kalır hem de asenkron bekleme yapmaz.
                 await navigator.clipboard.write([
                     new ClipboardItem({
-                        [mimeType]: blobPromise
+                        [mimeType]: cleanBlob
                     })
                 ]);
-                toast.success("Fotoğraf panoya kopyalandı!", { id: 'clipboard' });
+
+                toast.success("Fotoğraf panoya kopyalandı!", {id: 'clipboard'});
             } catch (error) {
-                console.error("Panoya kopyalama başarısız:", error);
-                // Sessizce geçiyoruz çünkü zaten cihazlarına indirdik
-                toast.dismiss('clipboard');
+                console.warn("Modern Clipboard API başarısız oldu, fallback deneniyor:", error);
+
+                // 🛠️ MOBİL FALLBACK: Eğer tarayıcı imaj kopyalamayı tamamen reddederse (Örn: Bazı kırpılmış Android tarayıcıları)
+                // Kullanıcının akışını kesmemek için text tabanlı kopyalama uyarısı fırlatıp sessizce devam ediyoruz.
+                toast.error("Fotoğraf otomatik kopyalanamadı, lütfen maile manuel ekleyin.", {
+                    id: 'clipboard',
+                    duration: 4000
+                });
             }
         }
 
@@ -83,7 +99,7 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
         // İşlem tamamlandıktan sonra başarılı sayfasına geç
         setTimeout(() => {
             onConfirm();
-            
+
             // 3. Bellek Temizliği (RAM Management)
             setTimeout(() => {
                 resetUpload();
@@ -106,14 +122,16 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                                 className={`shrink-0 w-[200px] p-3 rounded-xl border-2 flex flex-col gap-2 cursor-pointer transition-all snap-start ${inst.selected
                                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
                                     : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'
-                                    }`}
+                                }`}
                             >
                                 <div className="flex items-start justify-between gap-2">
-                                    <span className="font-bold text-sm text-slate-700 dark:text-slate-200 line-clamp-2 leading-tight">
+                                    <span
+                                        className="font-bold text-sm text-slate-700 dark:text-slate-200 line-clamp-2 leading-tight">
                                         {inst.name}
                                     </span>
-                                    <div className={`shrink-0 w-5 h-5 rounded flex items-center justify-center border transition-colors ${inst.selected ? 'bg-orange-500 border-orange-500 text-white' : 'border-slate-300'}`}>
-                                        {inst.selected && <Check size={14} strokeWidth={3} />}
+                                    <div
+                                        className={`shrink-0 w-5 h-5 rounded flex items-center justify-center border transition-colors ${inst.selected ? 'bg-orange-500 border-orange-500 text-white' : 'border-slate-300'}`}>
+                                        {inst.selected && <Check size={14} strokeWidth={3}/>}
                                     </div>
                                 </div>
                                 <div className="text-[10px] text-slate-400 truncate">{inst.email}</div>
@@ -124,7 +142,8 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
 
                 <div className="mb-6">
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">E-Posta Önizleme</h2>
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+                    <div
+                        className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
                         <div className="border-b border-slate-100 dark:border-slate-700 pb-3 mb-3">
                             <div className="text-xs text-slate-400 font-bold uppercase mb-1">Alıcı</div>
                             <div className="text-sm text-slate-800 dark:text-slate-200 break-words">
@@ -137,8 +156,9 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                         </div>
                         <div className="border-b border-slate-100 dark:border-slate-700 pb-3 mb-3">
                             <div className="text-xs text-slate-400 font-bold uppercase mb-1">Açık Adres</div>
-                            <div className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-start gap-1">
-                                <MapPin size={16} className="text-orange-500 mt-0.5 shrink-0" />
+                            <div
+                                className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-start gap-1">
+                                <MapPin size={16} className="text-orange-500 mt-0.5 shrink-0"/>
                                 {addressLoading ? (
                                     <span className="animate-pulse">Adres çözümleniyor...</span>
                                 ) : (
@@ -148,7 +168,8 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                         </div>
                         <div>
                             <div className="text-xs text-slate-400 font-bold uppercase mb-1">İçerik</div>
-                            <div className="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap font-mono text-[11px] leading-relaxed">
+                            <div
+                                className="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap font-mono text-[11px] leading-relaxed">
                                 {body}
                             </div>
                         </div>
@@ -160,14 +181,15 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                 </div>
             </div>
 
-            <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-10 fixed bottom-0 left-0 right-0">
+            <div
+                className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-10 fixed bottom-0 left-0 right-0">
                 <button
                     onClick={handleSendMailClick}
                     className="w-full py-4 rounded-2xl font-black text-white text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 bg-blue-600 hover:bg-blue-700 shadow-blue-500/30"
                 >
-                    <Mail size={20} />
+                    <Mail size={20}/>
                     E-Posta Gönder ve Bitir
-                    <ChevronRight size={20} />
+                    <ChevronRight size={20}/>
                 </button>
                 <button
                     onClick={onCancel}
@@ -179,23 +201,29 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
 
             {/* Rehber UX Modal Katmanı */}
             {showModal && (
-                <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-slate-900 border-2 border-orange-500 rounded-3xl p-8 max-w-sm w-full shadow-2xl shadow-orange-500/20 relative animate-in zoom-in-95 duration-300 text-center">
-                        <button 
+                <div
+                    className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div
+                        className="bg-slate-900 border-2 border-orange-500 rounded-3xl p-8 max-w-sm w-full shadow-2xl shadow-orange-500/20 relative animate-in zoom-in-95 duration-300 text-center">
+                        <button
                             onClick={() => setShowModal(false)}
                             className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
                         >
-                            <X size={24} />
+                            <X size={24}/>
                         </button>
 
-                        <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <ClipboardCheck size={40} className="text-orange-500" />
+                        <div
+                            className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <ClipboardCheck size={40} className="text-orange-500"/>
                         </div>
 
                         <h3 className="text-2xl font-black text-white mb-2">Fotoğrafı Unutmayın!</h3>
                         <div className="text-slate-300 text-sm leading-relaxed mb-8">
-                            <p className="mb-2">İhbar fotoğrafınız panoya <span className="text-orange-400 font-bold">başarıyla kopyalandı!</span> 🎉</p>
-                            <p>Açılacak mail uygulamasında metnin en altına sağ tıklayıp (veya uzun basıp) <span className="bg-slate-800 px-2 py-1 rounded text-orange-400 font-mono font-bold text-xs mx-1">Yapıştır</span> diyerek fotoğrafı eklemeyi lütfen unutmayın.</p>
+                            <p className="mb-2">İhbar fotoğrafınız panoya <span className="text-orange-400 font-bold">başarıyla kopyalandı!</span> 🎉
+                            </p>
+                            <p>Açılacak mail uygulamasında metnin en altına sağ tıklayıp (veya uzun basıp) <span
+                                className="bg-slate-800 px-2 py-1 rounded text-orange-400 font-mono font-bold text-xs mx-1">Yapıştır</span> diyerek
+                                fotoğrafı eklemeyi lütfen unutmayın.</p>
                         </div>
 
                         <button
@@ -203,7 +231,7 @@ export const MailPreview: React.FC<IProps> = ({ onConfirm, onCancel, images }) =
                             className="w-full py-4 rounded-2xl font-black text-white text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 bg-orange-600 hover:bg-orange-700 shadow-orange-500/30"
                         >
                             Anladım, Maile Geç
-                            <ChevronRight size={20} />
+                            <ChevronRight size={20}/>
                         </button>
                     </div>
                 </div>
