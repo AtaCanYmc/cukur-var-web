@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useUploadStore} from '../../store/useUploadStore';
-import {Check, Eraser, RotateCcw} from 'lucide-react';
+import {Check, Eraser, RotateCcw, Download} from 'lucide-react';
 import toast from "react-hot-toast";
 
 interface IProps {
@@ -8,7 +8,7 @@ interface IProps {
     onRetake: () => void;
 }
 
-export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
+export const ImagePreview: React.FC<IProps> = ({onConfirm, onRetake}) => {
     const image = useUploadStore(state => state.image);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -46,7 +46,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         canvas.style.maxWidth = drawWidth + 'px';
         canvas.style.maxHeight = '70vh';
 
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const ctx = canvas.getContext('2d', {willReadFrequently: true});
         if (ctx) {
             ctx.drawImage(img, 0, 0, drawWidth, drawHeight);
         }
@@ -55,7 +55,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         const offscreen = document.createElement('canvas');
         offscreen.width = drawWidth;
         offscreen.height = drawHeight;
-        const offCtx = offscreen.getContext('2d', { willReadFrequently: true });
+        const offCtx = offscreen.getContext('2d', {willReadFrequently: true});
 
         if (offCtx) {
             // Önce ham resmi temizce alt katmana basıyoruz
@@ -99,7 +99,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         };
 
         if (canvas) {
-            canvas.addEventListener('touchmove', preventScroll, { passive: false });
+            canvas.addEventListener('touchmove', preventScroll, {passive: false});
         }
         return () => {
             if (canvas) {
@@ -117,7 +117,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         // iOS Safari'de PointerEvent.offsetX/Y dokunmatik ekranlarda hatalı çalışır!
         // Bu yüzden matematiksel olarak en kusursuz yöntem olan getBoundingClientRect + clientX/Y kullanıyoruz.
         const rect = canvas.getBoundingClientRect();
-        
+
         // CSS border değerlerini hesapla (Örn: border-2 -> 2px)
         const style = window.getComputedStyle(canvas);
         const borderLeft = parseFloat(style.borderLeftWidth) || 0;
@@ -143,7 +143,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         const ctx = canvas.getContext('2d');
         if (ctx) {
             // "Blur çok büyük" geri bildirimi üzerine fırça boyutu yarı yarıya küçültüldü
-            const radius = Math.max(15, canvas.width * 0.02); 
+            const radius = Math.max(15, canvas.width * 0.02);
 
             // Dairesel Kırpma Maskesi (Circular Clip Mask)
             ctx.save();
@@ -188,26 +188,24 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         }
     };
 
-    const handleConfirm = () => {
+    const handleDownload = () => {
         if (canvasRef.current) {
-            // %80 Kalite ile JPEG çıktısı
             const imageSrc = canvasRef.current.toDataURL('image/jpeg', 0.8);
-
-            toast.success(
-                "İndirme Başlıyor. Lütfen açılacak mail ekranında ataç butonuna basarak bu fotoğrafı ekleyin",
-                { duration: 6000, icon: '📎' }
-            );
-
-            // Fotoğrafı galeriye kaydetmek için indirme tetikle
             const link = document.createElement('a');
             link.href = imageSrc;
             link.download = `cukur-var-${new Date().getTime()}.jpg`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            setTimeout(() => {
-                onConfirm(imageSrc);
-            }, 500);
+            toast.success("Fotoğraf cihazınıza kaydedildi!", {icon: '📥'});
+        }
+    };
+
+    const handleConfirm = () => {
+        if (canvasRef.current) {
+            // %80 Kalite ile JPEG çıktısı
+            const imageSrc = canvasRef.current.toDataURL('image/jpeg', 0.8);
+            onConfirm(imageSrc);
         }
     };
 
@@ -217,9 +215,9 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
                 <canvas
                     ref={canvasRef}
                     className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 max-w-full max-h-[70vh] select-none cursor-crosshair"
-                    style={{ 
-                        touchAction: 'none', 
-                        WebkitTouchCallout: 'none', 
+                    style={{
+                        touchAction: 'none',
+                        WebkitTouchCallout: 'none',
                         WebkitUserSelect: 'none',
                         userSelect: 'none',
                         maxWidth: '100%',
@@ -234,28 +232,42 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
                     onPointerCancel={handlePointerUp}
                 />
 
-                <div className="absolute top-6 bg-black/50 text-white px-4 py-2 rounded-full text-xs font-bold pointer-events-none backdrop-blur-sm">
-                    <Eraser size={14} className="inline mr-2" />
+                <div
+                    className="absolute top-6 bg-black/50 text-white px-4 py-2 rounded-full text-xs font-bold pointer-events-none backdrop-blur-sm">
+                    <Eraser size={14} className="inline mr-2"/>
                     Gizlemek istediğiniz yere dokunun veya sürükleyin
                 </div>
             </div>
 
-            <div className="w-full p-6 flex justify-between items-center bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-10">
-                <button
-                    onClick={onRetake}
-                    className="flex flex-col items-center gap-1 text-slate-500 hover:text-red-500 transition-colors"
-                >
-                    <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full">
-                        <RotateCcw size={24} />
-                    </div>
-                    <span className="text-xs font-bold uppercase">Tekrar</span>
-                </button>
+            <div
+                className="w-full p-6 flex justify-between items-center bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-10">
+                <div className="flex items-center gap-6">
+                    <button
+                        onClick={onRetake}
+                        className="flex flex-col items-center gap-1 text-slate-500 hover:text-red-500 transition-colors"
+                    >
+                        <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full">
+                            <RotateCcw size={24}/>
+                        </div>
+                        <span className="text-xs font-bold uppercase">Tekrar</span>
+                    </button>
+
+                    <button
+                        onClick={handleDownload}
+                        className="flex flex-col items-center gap-1 text-slate-500 hover:text-blue-500 transition-colors"
+                    >
+                        <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full">
+                            <Download size={24}/>
+                        </div>
+                        <span className="text-xs font-bold uppercase">İndir</span>
+                    </button>
+                </div>
 
                 <button
                     onClick={handleConfirm}
                     className="flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-2xl font-bold shadow-green-500/30 shadow-lg text-lg transition-transform active:scale-95"
                 >
-                    <Check size={24} />
+                    <Check size={24}/>
                     Onayla
                 </button>
             </div>

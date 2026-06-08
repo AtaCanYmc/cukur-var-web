@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useUploadStore} from '../../store/useUploadStore';
-import {Check, ChevronRight, Mail, MapPin, ClipboardCheck, X} from 'lucide-react';
+import {Check, ChevronRight, Mail, MapPin, Download, X} from 'lucide-react';
 import toast from 'react-hot-toast';
 import {useMailAutomation} from '../../hooks/useMailAutomation';
 import {buildMailContent} from '../../utils/mailBuilder';
@@ -43,43 +43,23 @@ export const MailPreview: React.FC<IProps> = ({onConfirm, onCancel, images}) => 
             return;
         }
 
-// 1. Clipboard Automation (Cross-Platform Mobile & Safari Fix)
+        // 1. Download Automation (Save Image to Device)
         if (images.length > 0) {
-            toast.loading("Fotoğraf panoya kopyalanıyor...", {id: 'clipboard'});
+            toast.loading("Fotoğraf cihazınıza kaydediliyor...", {id: 'download'});
             try {
                 const dataUrl = images[0];
-                const mimeMatch = dataUrl.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
-                const mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = `cukur-var-${new Date().getTime()}.jpg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
 
-                // 🚨 MOBİL & SAFARI SINIRLARINI ETKİSİZLEŞTİREN GÜVENLİ AKIŞ:
-                // Bazı mobil tarayıcılar ClipboardItem içinde Promise kabul etmediği için
-                // Base64 verisini fetch yerine doğrudan senkronize ArrayBuffer/Blob dönüşümüne tabi tutuyoruz.
-                const byteString = atob(dataUrl.split(',')[1]);
-                const ab = new ArrayBuffer(byteString.length);
-                const ia = new Uint8Array(ab);
-
-                for (let i = 0; i < byteString.length; i++) {
-                    ia[i] = byteString.charCodeAt(i);
-                }
-
-                const cleanBlob = new Blob([ab], {type: mimeType});
-
-                // Tarayıcıya hazır resolve edilmiş temiz blobu veriyoruz.
-                // Bu işlem hem jest süresi (user gesture) içinde kalır hem de asenkron bekleme yapmaz.
-                await navigator.clipboard.write([
-                    new ClipboardItem({
-                        [mimeType]: cleanBlob
-                    })
-                ]);
-
-                toast.success("Fotoğraf panoya kopyalandı!", {id: 'clipboard'});
+                toast.success("Fotoğraf başarıyla kaydedildi!", {id: 'download'});
             } catch (error) {
-                console.warn("Modern Clipboard API başarısız oldu, fallback deneniyor:", error);
-
-                // 🛠️ MOBİL FALLBACK: Eğer tarayıcı imaj kopyalamayı tamamen reddederse (Örn: Bazı kırpılmış Android tarayıcıları)
-                // Kullanıcının akışını kesmemek için text tabanlı kopyalama uyarısı fırlatıp sessizce devam ediyoruz.
-                toast.error("Fotoğraf otomatik kopyalanamadı, lütfen maile manuel ekleyin.", {
-                    id: 'clipboard',
+                console.warn("İndirme API başarısız oldu:", error);
+                toast.error("Fotoğraf otomatik kaydedilemedi, lütfen manuel indirin.", {
+                    id: 'download',
                     duration: 4000
                 });
             }
@@ -177,7 +157,7 @@ export const MailPreview: React.FC<IProps> = ({onConfirm, onCancel, images}) => 
                 </div>
 
                 <div className="text-sm text-slate-500 italic">
-                    (*) Çektiğiniz fotoğraf maile eklenmek üzere otomatik olarak panoya kopyalanacaktır.
+                    (*) Çektiğiniz fotoğraf maile eklenmek üzere otomatik olarak cihazınıza kaydedilecektir.
                 </div>
             </div>
 
@@ -214,16 +194,15 @@ export const MailPreview: React.FC<IProps> = ({onConfirm, onCancel, images}) => 
 
                         <div
                             className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <ClipboardCheck size={40} className="text-orange-500"/>
+                            <Download size={40} className="text-orange-500"/>
                         </div>
 
                         <h3 className="text-2xl font-black text-white mb-2">Fotoğrafı Unutmayın!</h3>
                         <div className="text-slate-300 text-sm leading-relaxed mb-8">
-                            <p className="mb-2">İhbar fotoğrafınız panoya <span className="text-orange-400 font-bold">başarıyla kopyalandı!</span> 🎉
+                            <p className="mb-2">İhbar fotoğrafınız cihazınıza <span className="text-orange-400 font-bold">başarıyla kaydedildi!</span> 🎉
                             </p>
-                            <p>Açılacak mail uygulamasında metnin en altına sağ tıklayıp (veya uzun basıp) <span
-                                className="bg-slate-800 px-2 py-1 rounded text-orange-400 font-mono font-bold text-xs mx-1">Yapıştır</span> diyerek
-                                fotoğrafı eklemeyi lütfen unutmayın.</p>
+                            <p>Açılacak mail uygulamasında <span
+                                className="bg-slate-800 px-2 py-1 rounded text-orange-400 font-mono font-bold text-xs mx-1">Ataç / Eklenti</span> butonuna basarak galerinizden fotoğrafı eklemeyi lütfen unutmayın.</p>
                         </div>
 
                         <button
