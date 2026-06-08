@@ -17,10 +17,12 @@ const HomePage = () => {
         const fetchStaticPotholes = async () => {
             try {
                 startLoading('İhbarlar haritaya işleniyor...');
-                
-                // 🚀 Jamstack Mimarisi: Veritabanına anlık istek atmak yerine 
-                // GitHub Actions'ın saat başı senkronize ettiği statik dosyayı tüketiyoruz.
-                const response = await fetch('/potholes.json', {
+
+                const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+                    ? import.meta.env.BASE_URL
+                    : `${import.meta.env.BASE_URL}/`;
+
+                const response = await fetch(`${baseUrl}potholes.json`, {
                     cache: 'no-store' // Tarayıcı agresif cache'ini önlemek için
                 });
 
@@ -53,7 +55,7 @@ const HomePage = () => {
 
     return (
         <PageWrapper showHeader showBottomNav>
-            <PWAInstallBanner />
+            <PWAInstallBanner/>
             <MainMap
                 potholes={potholes}
                 onMarkerClick={function (pothole: IPothole): void {
