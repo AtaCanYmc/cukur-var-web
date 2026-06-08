@@ -18,14 +18,24 @@ Bu süreçle ilgili:
 
 Sonuç elde etme garantisi verilmez. Uygulama sadece "bildirim sürecini" kolaylaştırır.
 
-## 3. KVKK ve Kişisel Verilerin Gizliliği
-ÇukurVar, **"Sıfır Sunucu" (Serverless/No-Backend)** mimarisi ile çalışır.
-- Uygulama üzerinde çektiğiniz hiçbir fotoğraf, 
-- Tarayıcınıza verdiğiniz hiçbir konum (GPS) bilgisi,
-- Gönderici e-posta adresiniz veya kimliğiniz,
-- Uygulamaya yazdığınız hiçbir açıklama metni
+## 3. KVKK, Açık Veri ve Kişisel Verilerin Gizliliği
 
-ÇukurVar veya üçüncü parti sunucularda (database) **ASLA DEPOLANMAZ ve İŞLENMEZ.** Veri, sadece anlık olarak tarayıcınızın geçici belleğinde (RAM) tutulur ve siz uygulamayı/sekmeği kapattığınızda veya maili gönderdiğinizde tamamen silinir. Tüm iletişim doğrudan sizin kişisel hesabınız ve e-posta sunucunuz üzerinden resmi kuruma iletilir. Bu nedenle ÇukurVar'dan kaynaklanabilecek bir "veri sızıntısı" teknik olarak mümkün değildir.
+ÇukurVar, sivil ihbar sürecini yürütürken **%100 Kişisel Veri (PII) muafiyeti** prensibiyle çalışır.
+
+**ASLA DEPOLANMAYAN BİLGİLER:**
+- Uygulama üzerinde çektiğiniz veya blurladığınız hiçbir fotoğraf,
+- Gönderici e-posta adresiniz, isminiz, kimliğiniz veya cihaz/IP bilgileriniz,
+- Uygulamaya yazdığınız şikayet metni
+
+Bu kişisel veriler hiçbir üçüncü parti sunucuda (database) saklanmaz ve işlenmez. Ana e-posta gönderim akışı tamamen sizin kişisel e-posta istemciniz (Mail, Gmail vb.) üzerinden, sizin kendi verilerinizle gerçekleşir.
+
+**AÇIK VERİ ARŞİVİ (SİVİL HARİTALANDIRMA):**
+Toplumsal farkındalık ve ileride istatistiksel raporlama amacıyla, ihbar başarıyla oluşturulduğunda sadece aşağıdaki "anonim metadatalar" Supabase altyapısındaki **ÇukurVar Açık Veri Arşivi**'ne kaydedilir:
+- Hasarın Kategorisi (Örn: Çukur, Hasar)
+- Haritadaki Coğrafi Koordinatlar (Enlem / Boylam)
+- Kayıt Tarihi ve İl/İlçe Bilgisi
+
+Bu mimari sayesinde platform, KVKK (Kişisel Verilerin Korunması Kanunu) ve GDPR kapsamında tam sivil korumaya sahip olup, herhangi bir kişisel veri ihlali sızıntısı barındırmaz.
 
 ## 4. Kullanım Kaynaklı Zararlar
 Kullanıcının uygulamayı kullanırken fiziksel çevresinde yaşayabileceği kazalar (örneğin; çukurun fotoğrafını çekerken trafiği tehlikeye atma veya yaralanma), mobil verisinin tükenmesi, veya cihazına gelebilecek herhangi bir zarardan proje inisiyatifi sorumlu tutulamaz. Çevresel farkındalık ve can güvenliği kullanıcının kendi sorumluluğundadır.

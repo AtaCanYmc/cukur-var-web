@@ -24,7 +24,8 @@ Hiçbir sunucu (backend) barındırmayan tamamen istemci taraflı (client-side) 
 
 ## ✨ Öne Çıkan Özellikler
 
-- 🛡️ **%100 Sunucusuz (Serverless) Mimari:** Projenin bir veritabanı veya sunucusu yoktur. Kullanıcıların verileri, konumları ve e-posta adresleri ASLA kaydedilmez. Tamamen KVKK ve Gizlilik dostudur.
+- 🛡️ **KVKK ve Gizlilik Odaklı Mimari:** Çekilen ihbar fotoğrafları, isim, e-posta, IP adresi veya cihaz bilgileri (PII) ASLA hiçbir uzak sunucuya yüklenmez; tüm işlemler doğrudan tarayıcı RAM'inde gerçekleşir.
+- 🗺️ **Açık Veri Arşivi (Sivil Haritalandırma):** İhbar oluşturulduğunda sadece hasarın kategorisi, tarihi ve koordinatları (enlem/boylam) Supabase üzerinde **%100 anonim** olarak arşivlenir. Amacımız, İzmir'deki kronik altyapı sorunlarının açık kaynaklı sivil bir haritasını çıkarmaktır.
 - 📱 **Progressive Web App (PWA):** ÇukurVar'ı tarayıcınızdan "Ana Ekrana Ekle" diyerek hem mobil cihazlarınıza hem de masaüstü bilgisayarlarınıza tek tıkla yerel bir uygulama (Native App) hissiyle kurabilirsiniz.
 - 📋 **Akıllı Pano ve Rehber Katmanı (Clipboard Automation):** Çekilen çukur fotoğrafları otomatik olarak cihazınızın panosuna (clipboard) kopyalanır ve e-posta uygulamasına geçtiğinizde tek yapmanız gereken "Yapıştır" demektir. Akıllı UI rehberi sizi yönlendirir.
 - 🚀 **Gelişmiş SEO ve Performans:** W3C standartlarına uygun `sitemap.xml`, `robots.txt`, dinamik Open Graph meta etiketleri ve agresif RAM yönetimi (Memory Leak koruması) ile ışık hızında çalışır.
