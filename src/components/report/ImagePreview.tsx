@@ -128,28 +128,42 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
     }, []);
 
     // ... existing code ...
-
     const performBlur = (e: React.PointerEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
         const offscreen = offscreenCanvasRef.current;
         if (!canvas || !offscreen) return;
 
-        const rect = canvas.getBoundingClientRect();
-        const dpr = dprRef.current;
-        
-        // CSS koordinatları alındığında DPI ölçeklendirmesi yapılması gerekiyor
-        const cssX = e.clientX - rect.left;
-        const cssY = e.clientY - rect.top;
-        
-        // CSS koordinatlarını gerçek canvas çözünürlüğünde konuma çevir
-        const x = cssX * dpr;
-        const y = cssY * dpr;
+        let x = 0;
+        let y = 0;
 
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        // Mobil Dokunmatik Optimizasyonu: En hassas "Scale Mapping"
+        // object-contain ve border gibi CSS özellikleri rect.width'i bozar.
+        // Bu yüzden doğrudan e.nativeEvent.offsetX kullanıyoruz (Border ve padding'den etkilenmez).
+        if (e.nativeEvent.offsetX !== undefined && e.nativeEvent.offsetY !== undefined) {
+            const scaleX = canvas.width / canvas.clientWidth;
+            const scaleY = canvas.height / canvas.clientHeight;
+            x = e.nativeEvent.offsetX * scaleX;
+            y = e.nativeEvent.offsetY * scaleY;
+        } else {
+            // Safari eski sürüm Fallback (offsetX desteklenmiyorsa)
+            const rect = canvas.getBoundingClientRect();
+            const style = window.getComputedStyle(canvas);
+            const borderLeft = parseFloat(style.borderLeftWidth) || 0;
+            const borderTop = parseFloat(style.borderTopWidth) || 0;
+            
+            const cssX = e.clientX - rect.left - borderLeft;
+            const cssY = e.clientY - rect.top - borderTop;
+            
+            const scaleX = canvas.width / canvas.clientWidth;
+            const scaleY = canvas.height / canvas.clientHeight;
+            
+            x = cssX * scaleX;
+            y = cssY * scaleY;
+        }
+
+        const ctx = canvas.getContext('2d');
         if (ctx) {
-            // Brush radius: mobil cihazlar için daha uygun boyut
-            const baseBrushSize = window.innerWidth < 768 ? 60 : 80;
-            const radius = Math.max(baseBrushSize * dpr, canvas.width * 0.04);
+            const radius = Math.max(30, canvas.width * 0.04); // Dairesel fırça yarıçapı
 
             // Dairesel Kırpma Maskesi (Circular Clip Mask)
             ctx.save();
@@ -157,7 +171,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             ctx.arc(x, y, radius, 0, Math.PI * 2, true);
             ctx.clip(); // Sadece bu dairenin içine çizim yapmasına izin ver
             
-            // Önceden blurlanmış görselden tam o dairenin üstüne pikselleri kopyala
+            // Önceden blurlanmış harika görselden tam o dairenin üstüne pikselleri kopyala!
             ctx.drawImage(offscreen, 0, 0, canvas.width, canvas.height);
             ctx.restore(); // Maskeyi kaldır
         }
@@ -222,7 +236,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             <div className="flex-1 w-full flex items-center justify-center overflow-hidden relative p-4">
                 <canvas
                     ref={canvasRef}
-                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 select-none cursor-crosshair"
+                    className="shadow-2xl rounded-lg border-2 border-slate-200 dark:border-slate-700 max-w-full max-h-[70vh] select-none cursor-crosshair"
                     style={{ 
                         touchAction: 'none', 
                         WebkitTouchCallout: 'none', 
