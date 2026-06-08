@@ -77,16 +77,13 @@ export const MailPreview: React.FC<IProps> = ({onConfirm, onCancel, images}) => 
         setShowModal(false);
         const emails = getSelectedEmails();
 
-        // 🚨 SİVİL İNİSİYATİF - SESSİZ KAYIT (Fire and Forget)
-        // Kullanıcının mail açılış hızını kesmemek için asenkron bekletme (await) yapmıyoruz.
-        // Hata olsa bile hook kendi içinde yutacak, ana akış etkilenmeyecek.
         if (location?.lat && location?.lng) {
             savePotholeCoordinates({
                 category: category || 'other',
                 latitude: location.lat,
                 longitude: location.lng,
                 city: address?.split(',').slice(-2, -1)[0]?.trim() || 'Bilinmiyor' // Kabaca ilçeyi/şehri çeker
-            });
+            }).then(r => r);
         }
 
         // Mail istemcisini tetikle
