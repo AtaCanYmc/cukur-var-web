@@ -62,7 +62,7 @@ export const MainMap: React.FC<IMapProps> = ({potholes, onMarkerClick}) => {
                     <Marker
                         key={pothole.id}
                         position={[pothole.lat, pothole.lng]}
-                        icon={createCustomPotholeIcon(pothole.status)}
+                        icon={createCustomPotholeIcon()}
                         eventHandlers={{
                             click: () => onMarkerClick(pothole),
                         }}
