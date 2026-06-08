@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageWrapper } from '../components/layout/PageWrapper';
-import { Mail, Github, Heart, EyeOff, AlertTriangle, Info } from 'lucide-react';
+import { Mail, Github, Heart, EyeOff, AlertTriangle, Info, Database, ShieldCheck } from 'lucide-react';
 import { useDevice } from '../hooks/useDevice';
 
 export const AboutPage: React.FC = () => {
@@ -39,16 +39,42 @@ export const AboutPage: React.FC = () => {
                         </p>
                     </div>
 
-                    {/* KVKK / Privacy Card (Yenilenen Doğru Bilgiler) */}
+                    {/* 1. Görsel İşleme ve Gizlilik */}
                     <div className="bg-emerald-50/60 dark:bg-slate-800/50 rounded-3xl p-6 mb-6 border border-emerald-100/70 dark:border-slate-700/60">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 bg-emerald-500 text-white rounded-xl">
                                 <EyeOff size={18} />
                             </div>
-                            <h2 className="text-base font-bold text-slate-900 dark:text-white">Sunucusuz ve %100 Güvenli</h2>
+                            <h2 className="text-base font-bold text-slate-900 dark:text-white">Görsel İşleme ve Gizlilik</h2>
                         </div>
-                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed space-y-2">
-                            Uygulamanın bir veritabanı veya backend sunucusu bulunmamaktadır. Çektiğiniz fotoğraflar internete yüklenmez, doğrudan cihazınıza indirilir. Konum verileriniz hiçbir sistemde saklanmaz. İhbar metni tarayıcınızda hazırlanır ve doğrudan kendi e-posta adresiniz üzerinden ilgili kurumlara (Belediye, Emniyet, Karayolları) iletilir.
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                            Çektiğiniz veya sisteme yüklediğiniz ihbar fotoğrafları <strong>ASLA hiçbir uzak sunucuya veya buluta yüklenmez.</strong> Tüm sansürleme/blurlama işlemleri %100 istemci tarafında (tarayıcınızın RAM belleğinde) işlenir ve doğrudan cihazınıza indirilir. Ana e-posta gönderim akışı tamamen sizin kişisel e-posta istemciniz (Mail, Gmail vb.) üzerinden gerçekleşir.
+                        </p>
+                    </div>
+
+                    {/* 2. Anonim Konum Arşivi */}
+                    <div className="bg-blue-50/60 dark:bg-slate-800/50 rounded-3xl p-6 mb-6 border border-blue-100/70 dark:border-slate-700/60">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-blue-500 text-white rounded-xl">
+                                <Database size={18} />
+                            </div>
+                            <h2 className="text-base font-bold text-slate-900 dark:text-white">Açık Veri & Konum Arşivi</h2>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                            Kullanıcılar ihbar oluşturduğunda; sadece hasarın kategorisi, tarihi ve haritadaki coğrafi koordinatları (enlem/boylam) <strong>"ÇukurVar Açık Veri Altyapı Arşivi"</strong> kapsamında Supabase üzerinde güvenli olarak saklanır. Bu arşivin yegane amacı; İzmir genelindeki kronik altyapı sorunlarının sivil bir haritasını çıkarmak ve ileride kamu yararına istatistiksel raporlar sunmaktır.
+                        </p>
+                    </div>
+
+                    {/* 3. KVKK ve Kişisel Veri Muafiyeti */}
+                    <div className="bg-indigo-50/60 dark:bg-slate-800/50 rounded-3xl p-6 mb-6 border border-indigo-100/70 dark:border-slate-700/60">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-indigo-500 text-white rounded-xl">
+                                <ShieldCheck size={18} />
+                            </div>
+                            <h2 className="text-base font-bold text-slate-900 dark:text-white">KVKK & GDPR Muafiyeti</h2>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                            Açık veri arşivine uçan koordinat verilerinin yanında; Adınız, Soyadınız, E-posta adresiniz, IP adresiniz veya cihaz bilgileriniz gibi <strong>hiçbir kişisel veri (PII) KESİNLİKLE toplanmaz.</strong> Sistem %100 anonim çalışacak şekilde izole edilmiştir. Bu şeffaf mimari sayesinde platform, KVKK (Kişisel Verilerin Korunması Kanunu) kapsamında tam sivil korumaya sahiptir.
                         </p>
                     </div>
 
