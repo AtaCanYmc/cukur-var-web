@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { useUploadStore } from '../../store/useUploadStore';
-import { Eraser, Check, RotateCcw } from 'lucide-react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useUploadStore} from '../../store/useUploadStore';
+import {Check, Eraser, RotateCcw} from 'lucide-react';
 import toast from "react-hot-toast";
 
 interface IProps {
@@ -13,19 +13,18 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
     const [isDrawing, setIsDrawing] = useState(false);
-    const dprRef = useRef(window.devicePixelRatio || 1);
 
     // Canvas blur uygulamak için fallback fonksiyon
-    const applyCanvasBlur = (ctx: CanvasRenderingContext2D, width: number, height: number, dpr: number) => {
-        const iterations = 2;
-        const radius = 10;
-        
+    const applyCanvasBlur = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+        const iterations = 5; // Yoğun sansür için döngü sayısını artırdık
+        const radius = 20;
+
         for (let i = 0; i < iterations; i++) {
-            ctx.globalAlpha = 0.9;
-            ctx.drawImage(ctx.canvas, -radius * dpr, 0, width * dpr + radius * dpr * 2, height * dpr);
-            ctx.drawImage(ctx.canvas, radius * dpr, 0, width * dpr - radius * dpr * 2, height * dpr);
-            ctx.drawImage(ctx.canvas, 0, -radius * dpr, width * dpr, height * dpr + radius * dpr * 2);
-            ctx.drawImage(ctx.canvas, 0, radius * dpr, width * dpr, height * dpr - radius * dpr * 2);
+            ctx.globalAlpha = 0.85;
+            ctx.drawImage(ctx.canvas, -radius, 0, width + radius * 2, height);
+            ctx.drawImage(ctx.canvas, radius, 0, width - radius * 2, height);
+            ctx.drawImage(ctx.canvas, 0, -radius, width, height + radius * 2);
+            ctx.drawImage(ctx.canvas, 0, radius, width, height - radius * 2);
         }
         ctx.globalAlpha = 1;
     };
@@ -34,61 +33,43 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const dpr = window.devicePixelRatio || 1;
-        dprRef.current = dpr;
+        // 🚨 ÖLÇEKLENDİRME TAMAMEN KALDIRILDI: 1:1 Ham Resim Boyutu
+        const drawWidth = img.width;
+        const drawHeight = img.height;
 
-        // RAM Dostu Görsel Ölçeklendirme (Downscale)
-        let MAX_DIMENSION = 1200;
-        // Mobil cihazlarda daha küçük tutma
-        if (window.innerWidth < 768) {
-            MAX_DIMENSION = 800;
-        }
+        canvas.width = drawWidth;
+        canvas.height = drawHeight;
 
-        let drawWidth = img.width;
-        let drawHeight = img.height;
-
-        if (drawWidth > MAX_DIMENSION || drawHeight > MAX_DIMENSION) {
-            const ratio = Math.min(MAX_DIMENSION / drawWidth, MAX_DIMENSION / drawHeight);
-            drawWidth = Math.floor(drawWidth * ratio);
-            drawHeight = Math.floor(drawHeight * ratio);
-        }
-
-        // Canvas iç çözünürlüğü (Device Pixel Ratio ile ölçeklendir)
-        const canvasWidth = drawWidth * dpr;
-        const canvasHeight = drawHeight * dpr;
-
-        // Ana ekran (Görünür Canvas)
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        canvas.style.width = drawWidth + 'px';
-        canvas.style.height = drawHeight + 'px';
+        // Görselin ekrana sığma işini tamamen CSS'e bırakıyoruz
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.maxWidth = drawWidth + 'px';
+        canvas.style.maxHeight = '70vh';
 
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (ctx) {
-            ctx.scale(dpr, dpr);
             ctx.drawImage(img, 0, 0, drawWidth, drawHeight);
         }
 
-        // Safari Fix: Arka Planda Kliplenecek Bulanık Canvas
+        // Arka Plan Bulanık Katmanı (Offscreen Canvas)
         const offscreen = document.createElement('canvas');
-        offscreen.width = canvasWidth;
-        offscreen.height = canvasHeight;
+        offscreen.width = drawWidth;
+        offscreen.height = drawHeight;
         const offCtx = offscreen.getContext('2d', { willReadFrequently: true });
-        
+
         if (offCtx) {
-            offCtx.scale(dpr, dpr);
-            
-            // Canvas filter desteği kontrol et (iOS Safari desteği yok)
+            // Önce ham resmi temizce alt katmana basıyoruz
+            offCtx.drawImage(img, 0, 0, drawWidth, drawHeight);
+
+            // 🚨 YOĞUN BLUR FİXİ: Kendisini değil, doğrudan 'img' nesnesini kaynak gösteriyoruz
             if (offCtx.filter !== undefined && offCtx.filter !== '') {
-                offCtx.filter = 'blur(20px)';
+                offCtx.filter = 'blur(45px)'; // Yoğun sansür oranı
                 offCtx.drawImage(img, 0, 0, drawWidth, drawHeight);
+                offCtx.filter = 'none';
             } else {
-                // Fallback: Blur filterı desteklenmiyorsa, görüntüyü olduğu gibi kopyala
-                // ve performans için daha hızlı blur uygula
-                offCtx.drawImage(img, 0, 0, drawWidth, drawHeight);
-                applyCanvasBlur(offCtx, drawWidth, drawHeight, dpr);
+                applyCanvasBlur(offCtx, drawWidth, drawHeight);
             }
-            
+
             offscreenCanvasRef.current = offscreen;
         }
     }, []);
@@ -100,7 +81,7 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             img.onload = () => {
                 initializeCanvas(img);
             };
-            
+
             return () => {
                 img.onload = null;
                 img.src = '';
@@ -169,10 +150,10 @@ export const ImagePreview: React.FC<IProps> = ({ onConfirm, onRetake }) => {
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, Math.PI * 2, true);
             ctx.clip(); // Sadece bu dairenin içine çizim yapmasına izin ver
-            
-            // Önceden blurlanmış görselden tam o dairenin üstüne pikselleri kopyala
+
+            // Blur efekti uygula
             ctx.drawImage(offscreen, 0, 0, canvas.width, canvas.height);
-            ctx.restore(); // Maskeyi kaldır
+            ctx.restore();
         }
     };
 
