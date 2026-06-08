@@ -12,7 +12,7 @@ const StickyHomeButton = (props: IProps) => {
             onClick={props.onClick}
             aria-label="Ana Konuma Dön"
             className={`
-                fixed top-5 left-4 z-40 
+                fixed top-5 left-4 z-999 
                 pointer-events-auto
                 flex items-center justify-center 
                 w-12 h-12 bg-white dark:bg-slate-800 
