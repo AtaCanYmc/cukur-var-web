@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ed2485ae-95a4-44c3-9c62-78d029de8256",
+    "lat": 38.4659888208857,
+    "lng": 27.1951965369054,
+    "status": "active",
+    "severity": "high"
+  },
+  {
+    "id": "ca3e36c7-4ba6-469c-ab26-623fc42b231b",
+    "lat": 38.4623261370234,
+    "lng": 27.1910766271375,
+    "status": "active",
+    "severity": "high"
+  }
+]
