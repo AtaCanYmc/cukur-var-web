@@ -16,6 +16,14 @@
 
 ---
 
+<div align="center">
+  <img src="docs/images/senaryo-1.png" width="30%" alt="ÇukurVar Harita Görünümü" />
+  &nbsp;
+  <img src="docs/images/senaryo-2.png" width="30%" alt="İhbar Oluşturma Adımı" />
+  &nbsp;
+  <img src="docs/images/senaryo-3.png" width="30%" alt="Mail Önizleme ve Gönderim" />
+</div>
+
 ## 🌟 Proje Hakkında
 
 **ÇukurVar**, vatandaşların çevrelerinde gördükleri açık çukurlar, bozuk yollar veya tehlike arz eden altyapı sorunlarını saniyeler içerisinde harita üzerinde işaretleyip, durumu otomatik olarak ilgili kurumlara (Belediye, İZSU vb.) resmi bir e-posta formatında iletmelerini sağlayan **bağımsız bir sivil teknoloji (Civic Tech)** girişimidir.
