@@ -23,7 +23,7 @@ Projeyi lokalinizde çalıştırmak için:
 ## 🛠️ Nasıl Katkıda Bulunabilirsiniz?
 
 ### 1. Yeni Kurum Eklemek veya Güncellemek
-Projeye yeni bir belediye veya resmi kurum e-postası eklemek çok basittir. Veritabanımız `src/data/institutions.ts` dosyasıdır.
+Projeye yeni bir belediye veya resmi kurum e-postası eklemek çok basittir. Veritabanımız `public/json/institutions.json` dosyasıdır.
 Yeni bir kurum objesi eklemek için ilgili dosyayı açın ve listeye ekleme yapın:
 
 ```typescript

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { INITIAL_INSTITUTIONS, type Institution } from '../data/institutions';
+import { type Institution } from '../types/institutions.ts';
+import {baseUrl} from "./useEnv.ts";
 
 interface NominatimResponse {
     address?: {
@@ -13,9 +14,10 @@ interface NominatimResponse {
 }
 
 export const useMailAutomation = (lat?: number, lng?: number) => {
-    const [institutions, setInstitutions] = useState<Institution[]>(INITIAL_INSTITUTIONS);
+    const [baseInstitutions, setBaseInstitutions] = useState<Institution[]>([]);
+    const [institutions, setInstitutions] = useState<Institution[]>([]);
     const [address, setAddress] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const toggleInstitution = (id: string) => {
         setInstitutions(prev => prev.map(inst =>
@@ -28,7 +30,23 @@ export const useMailAutomation = (lat?: number, lng?: number) => {
     };
 
     useEffect(() => {
-        if (!lat || !lng) return;
+        fetch(`${baseUrl}json/institutions.json`)
+            .then(res => res.json())
+            .then((data: Institution[]) => {
+                setBaseInstitutions(data);
+                if (!lat || !lng) {
+                    setInstitutions(data);
+                    setLoading(false);
+                }
+            })
+            .catch(err => {
+                console.error("Failed to load institutions", err);
+                setLoading(false);
+            });
+    }, [lat, lng]);
+
+    useEffect(() => {
+        if (!lat || !lng || baseInstitutions.length === 0) return;
 
         const fetchAddress = async () => {
             setLoading(true);
@@ -57,7 +75,7 @@ export const useMailAutomation = (lat?: number, lng?: number) => {
                 const districtName = (rawAddress.county || rawAddress.town || rawAddress.suburb || rawAddress.city_district || '').toLocaleLowerCase('tr-TR');
                 
                 if (districtName) {
-                    setInstitutions(prev => prev.map(inst => {
+                    setInstitutions(baseInstitutions.map(inst => {
                         if (inst.id === 'izmir_bb') return { ...inst, selected: true };
                         
                         const instNameNormalized = inst.name.toLocaleLowerCase('tr-TR');
@@ -66,12 +84,14 @@ export const useMailAutomation = (lat?: number, lng?: number) => {
 
                         return { ...inst, selected: isMatch || inst.selected };
                     }));
+                } else {
+                    setInstitutions(baseInstitutions);
                 }
 
             } catch {
                 // Sessiz hata yönetimi (Dayanıklılık)
                 setAddress('Konum koordinat bazlı hazırlandı');
-                setInstitutions(prev => prev.map(inst => 
+                setInstitutions(baseInstitutions.map(inst => 
                     inst.id === 'izmir_bb' ? { ...inst, selected: true } : { ...inst, selected: false }
                 ));
             } finally {
@@ -80,7 +100,7 @@ export const useMailAutomation = (lat?: number, lng?: number) => {
         };
 
         fetchAddress();
-    }, [lat, lng]);
+    }, [lat, lng, baseInstitutions]);
 
     return { 
         institutions, 
