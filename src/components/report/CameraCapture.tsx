@@ -106,7 +106,6 @@ export const CameraCapture: React.FC<IProps> = ({onCapture, onCancel, onContinue
             )}
 
             {/* UI Kontrolleri */}
-            {/* UI Kontrolleri */}
             {!error && (
                 <>
                     {/* Kapat Butonu */}
@@ -115,6 +114,15 @@ export const CameraCapture: React.FC<IProps> = ({onCapture, onCancel, onContinue
                         className="absolute top-6 right-6 z-30 w-10 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors"
                     >
                         <X size={24}/>
+                    </button>
+
+                    {/* Fotoğraf Olmadan Devam Et Butonu */}
+                    <button
+                        onClick={onContinue}
+                        className="absolute top-6 left-6 z-30 px-4 h-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white text-xs font-semibold hover:bg-black/60 transition-colors gap-2"
+                    >
+                        <CameraOff size={16}/>
+                        Fotoğrafsız Devam Et
                     </button>
 
                     <div className="absolute bottom-16 w-full flex items-center justify-center gap-8 z-20 pb-safe">

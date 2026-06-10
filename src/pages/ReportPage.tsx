@@ -82,7 +82,7 @@ export const ReportPage: React.FC = () => {
                 {currentStep === 'LOCATION' && (
                     <LocationPicker
                         onConfirm={handleLocationConfirm}
-                        onCancel={() => setStep('PREVIEW')}
+                        onCancel={() => setStep(image ? 'PREVIEW' : 'CAMERA')}
                     />
                 )}
 
