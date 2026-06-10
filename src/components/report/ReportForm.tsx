@@ -107,7 +107,7 @@ export const ReportForm: React.FC<IProps> = ({ onSubmit, onBack, onCancel }) => 
                         : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
                         }`}
                 >
-                    Raporla
+                    Sorunu Onayla
                     <Check size={20} />
                 </button>
                 <button

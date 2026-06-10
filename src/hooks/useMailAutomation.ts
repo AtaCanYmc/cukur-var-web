@@ -83,7 +83,7 @@ export const useMailAutomation = (lat?: number, lng?: number) => {
                         const isMatch = districtWords.some(word => word.length > 3 && instNameNormalized.includes(word)) || instNameNormalized.includes(districtName);
 
                         return { ...inst, selected: isMatch || inst.selected };
-                    }));
+                    }).sort(a => a.selected ? -1 : 1));
                 } else {
                     setInstitutions(baseInstitutions);
                 }
