@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useUploadStore } from '../store/useUploadStore';
-import { PageWrapper } from '../components/layout/PageWrapper';
-import { UploadOverlay } from "../components/layout/UploadOverlay.tsx";
-import { ROUTES } from "../routes/paths..ts";
-import { CameraCapture } from "../components/report/CameraCapture";
-import { ImagePreview } from "../components/report/ImagePreview";
-import { ReportForm } from "../components/report/ReportForm";
-import { LocationPicker } from "../components/report/LocationPicker";
-import { MailPreview } from "../components/report/MailPreview";
+import React, {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {useUploadStore} from '../store/useUploadStore';
+import {PageWrapper} from '../components/layout/PageWrapper';
+import {UploadOverlay} from "../components/layout/UploadOverlay.tsx";
+import {ROUTES} from "../routes/paths..ts";
+import {CameraCapture} from "../components/report/CameraCapture";
+import {ImagePreview} from "../components/report/ImagePreview";
+import {ReportForm} from "../components/report/ReportForm";
+import {LocationPicker} from "../components/report/LocationPicker";
+import {MailPreview} from "../components/report/MailPreview";
 
 export const ReportPage: React.FC = () => {
     const navigate = useNavigate();
-    
+
     // Zustand Atomic Selectors
     const currentStep = useUploadStore(state => state.currentStep);
     const setStep = useUploadStore(state => state.setStep);
@@ -28,6 +28,11 @@ export const ReportPage: React.FC = () => {
     const handleCameraCapture = (img: string) => {
         setImage(img);
         setStep('PREVIEW');
+    };
+
+    const continueWithoutPhoto = () => {
+        setImage(null);
+        setStep('LOCATION');
     };
 
     const handlePreviewConfirm = (finalImage: string) => {
@@ -61,6 +66,7 @@ export const ReportPage: React.FC = () => {
                     <CameraCapture
                         onCapture={handleCameraCapture}
                         onCancel={() => navigate(ROUTES.HOME)}
+                        onContinue={continueWithoutPhoto}
                     />
                 )}
 
@@ -99,7 +105,7 @@ export const ReportPage: React.FC = () => {
                 )}
 
                 {/* 4. Uploading & Success States (Overlay) */}
-                {currentStep === 'UPLOADING' && <UploadOverlay />}
+                {currentStep === 'UPLOADING' && <UploadOverlay/>}
 
                 {/* Success Screen */}
                 {currentStep === 'SUCCESS' && (
@@ -108,9 +114,9 @@ export const ReportPage: React.FC = () => {
                             <div
                                 className="w-24 h-24 bg-green-500 rounded-full mx-auto mb-6 flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.4)]">
                                 <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
+                                     stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3}
-                                        d="M5 13l4 4L19 7" />
+                                          d="M5 13l4 4L19 7"/>
                                 </svg>
                             </div>
                             <h2 className="text-white font-black text-3xl uppercase tracking-tighter mb-2">

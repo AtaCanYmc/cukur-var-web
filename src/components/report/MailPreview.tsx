@@ -77,27 +77,27 @@ export const MailPreview: React.FC<IProps> = ({onConfirm, onCancel, images}) => 
         setShowModal(false);
         const emails = getSelectedEmails();
 
-        if (location?.lat && location?.lng) {
-            savePotholeCoordinates({
-                category: category || 'other',
-                latitude: location.lat,
-                longitude: location.lng,
-                city: address?.split(',').slice(-2, -1)[0]?.trim() || 'Bilinmiyor' // Kabaca ilçeyi/şehri çeker
-            }).then(r => r);
-        }
+        savePotholeCoordinates({
+            category: category || 'other',
+            latitude: location?.lat ?? 0,
+            longitude: location?.lng ?? 0,
+            city: address?.split(',').slice(-2, -1)[0]?.trim() || 'Bilinmiyor' // Kabaca ilçeyi/şehri çeker
+        }).catch(error => {
+            // Hata durumunda bile mail akışını kesme, sadece logla
+            console.error("Supabase kayıt hatası (Sessizce yutuldu):", error);
+        }).finally(() => {
+            // Mail istemcisini tetikle
+            window.location.href = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-        // Mail istemcisini tetikle
-        window.location.href = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-        // İşlem tamamlandıktan sonra başarılı sayfasına geç
-        setTimeout(() => {
-            onConfirm();
-
-            // 3. Bellek Temizliği (RAM Management)
+            // İşlem tamamlandıktan sonra başarılı sayfasına geç
             setTimeout(() => {
-                resetUpload();
+                onConfirm();
+                // 3. Bellek Temizliği (RAM Management)
+                setTimeout(() => {
+                    resetUpload();
+                }, 1500);
             }, 1500);
-        }, 1500);
+        });
     };
 
     return (
