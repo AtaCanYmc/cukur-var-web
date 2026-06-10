@@ -2,7 +2,7 @@ name: Jamstack Data Pipeline
 
 on:
   schedule:
-    - cron: '0 * * * *' # Her saat başı
+    - cron: '*/30 * * * *' # Her yarım saatte bir
   workflow_dispatch: # Manuel tetikleme imkanı
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
           
           # Eğer public/potholes.json dosyasında değişiklik varsa commit at
           if ! git diff-index --quiet HEAD; then
-            git commit -m "chore: sync live potholes data from supabase [skip ci]"
+            git commit -m "chore: sync live potholes data from supabase"
             git push
           else
             echo "No new data to sync. Exiting smoothly."
