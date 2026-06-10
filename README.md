@@ -68,7 +68,7 @@ Proje ana dizininde bulunan `.env.example` dosyasını `.env` olarak kopyalayın
 ```env
 VITE_APP_VERSION=v1.0.0
 VITE_APP_YEAR=2026
-VITE_CONTACT_EMAIL=atacan@example.com
+VITE_CONTACT_EMAIL=info@cukurvar.com.tr
 VITE_GITHUB_URL=https://github.com/AtaCanYmc/cukur-var-web
 VITE_CITY_NAME=İzmir
 ```
