@@ -38,3 +38,5 @@ jobs:
           VITE_CONTACT_EMAIL: "info@cukurvar.com.tr"
           VITE_GITHUB_URL: "https://github.com/AtaCanYmc/cukur-var-web"
           VITE_CITY_NAME: "İzmir"
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
