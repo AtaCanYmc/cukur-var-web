@@ -1,6 +1,6 @@
 import React from 'react';
 import {PageWrapper} from '../components/layout/PageWrapper';
-import {Mail, Github, Heart, EyeOff, AlertTriangle, Info, Database, ShieldCheck} from 'lucide-react';
+import {Mail, Github, Heart, EyeOff, AlertTriangle, Info, Database, ShieldCheck, Instagram} from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
     return (
@@ -163,6 +163,16 @@ export const AboutPage: React.FC = () => {
                                         GitHub</h3>
                                     <p className="text-[11px] text-slate-400">Kaynak kodları inceleyin ve katkıda
                                         bulunun</p>
+                                </div>
+                            </a>
+
+                            <a href="https://instagram.com/cukurvar.app" target="_blank"
+                               rel="noopener noreferrer"
+                               className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+                                <Instagram className="text-pink-500" size={22}/>
+                                <div>
+                                    <h3 className="font-bold text-slate-900 dark:text-white text-xs">Instagram</h3>
+                                    <p className="text-[11px] text-slate-400">@cukurvar.app adresinden bizi takip edin</p>
                                 </div>
                             </a>
 
