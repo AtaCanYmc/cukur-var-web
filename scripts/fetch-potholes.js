@@ -41,7 +41,7 @@ const fetchPotholes = async () => {
             severity: item.category === 'pothole' ? 'high' : 'low'
         }));
 
-        const publicDir = path.join(__dirname, '../public');
+        const publicDir = path.join(__dirname, '../public/json');
         const outputPath = path.join(publicDir, 'potholes.json');
         
         // public klasörü yoksa oluştur
