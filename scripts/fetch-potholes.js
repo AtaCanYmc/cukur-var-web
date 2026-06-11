@@ -51,7 +51,7 @@ const fetchPotholes = async () => {
 
         // Veriyi senkron olarak statik JSON dosyasına yaz
         fs.writeFileSync(outputPath, JSON.stringify(mappedData, null, 2), 'utf-8');
-        console.log(`✅ Successfully mapped and wrote ${mappedData.length} records to public/potholes.json`);
+        console.log(`✅ Successfully mapped and wrote ${mappedData.length} records to public/json/potholes.json`);
         
     } catch (error) {
         console.error("❌ Error fetching or saving potholes data:", error);
